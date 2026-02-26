@@ -1,0 +1,13 @@
+# --- Core: Apache Spark (PySpark) ---
+pyspark>=3.5.0
+
+# --- Data Processing & Analysis ---
+pandas>=2.1.0
+numpy>=1.26.0
+
+# --- Visualization (for report figures & notebooks) ---
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# --- Configuration & Utilities ---
+python-dotenv>=1.0.0       # Environment variable management
