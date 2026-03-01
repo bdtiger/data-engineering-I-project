@@ -1,2 +1,18 @@
 \section{Question 3: The Big Data Ecosystem -- Is There a Logic?}
-% Write your answer for Question 3 here.
+
+The big data ecosystem is not fragmented. It is a coherent, reactive progression. Each generation of technologies emerged to solve the critical bottlenecks---volume, latency, or system coupling---of its predecessors.
+
+\subsection{The Volume Problem: Disk-Bound Batch Processing}
+Traditional relational databases could not scale horizontally. Google introduced GFS and MapReduce \cite{dean2004mapreduce}, later open-sourced as Apache Hadoop and HDFS, to handle massive data volumes on commodity hardware. But Hadoop had a fundamental flaw: aggressive disk I/O. MapReduce wrote intermediate results to disk after every computation phase. This made it highly fault-tolerant but terrible for low-latency queries and iterative machine learning \cite{zaharia2012resilient}.
+
+\subsection{The Random Access Problem: Wide-Column Stores}
+HDFS was optimized for sequential scans of large files. It could not serve real-time point queries. Google BigTable \cite{chang2006bigtable} solved this as a distributed NoSQL layer over GFS. This inspired Apache HBase for Hadoop. Facebook then built Apache Cassandra to eliminate HBase's centralized master node. Cassandra combined BigTable's column-family model with Dynamo's masterless architecture. It traded strong consistency for extreme availability and zero single points of failure.
+
+\subsection{The Velocity Problem: The Streaming Paradigm}
+As data velocity increased, batch processing became too slow. Twitter Storm pioneered distributed streaming but had severe centralized bottlenecks. Twitter Heron redesigned Storm to fix this by decoupling the scheduling framework. Meanwhile, LinkedIn introduced Apache Kafka \cite{kreps2011kafka} to prevent high-velocity data from overwhelming processing engines. Kafka acted as a distributed log broker, decoupling data ingestion from computation.
+
+\subsection{The Iteration Problem: In-Memory Unification}
+Apache Spark \cite{zaharia2012resilient} directly addressed Hadoop's disk bottleneck with Resilient Distributed Datasets (RDDs). This enabled fault-tolerant, in-memory processing that accelerated iterative algorithms by orders of magnitude. Spark tried to unify batch and streaming through micro-batching, but this still added latency. Apache Flink countered this by treating batch as bounded streams, achieving true low-latency processing.
+
+\subsection{Modern Convergence: Cloud-Native and Lakehouse Architectures}
+Today's architectures reject the tight coupling of storage and compute that defined Hadoop. Modern systems use cheap, scalable cloud object storage with elastic compute engines. This evolution led to the Data Lakehouse \cite{armbrust2021lakehouse}, powered by formats like Apache Iceberg. The Lakehouse merges data lakes and warehouses, bringing ACID transactions and schema enforcement to decoupled cloud storage.

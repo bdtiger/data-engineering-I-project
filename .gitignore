@@ -76,6 +76,5 @@ htmlcov/
 tweets/
 *.bbl
 *.blg
-*.bib
 %OUTDIR%
 .idea
