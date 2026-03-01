@@ -1,0 +1,40 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\title{Seminar Report}
+\author{
+    \textbf{Team Members: Group 32} \\[0.3cm]
+    Abdur Rehman Khalid \\
+    Arnab Kumar Ghosh \\
+    Dip Chowdhury \\
+    Muhammad Umair \\
+    Pradip Kumar Das \\
+    Zihao Yang
+}
+\date{\today}
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+% Include sections for each question
+\input{sections/question1.tex}
+\input{sections/question2.tex}
+\input{sections/question3.tex}
+\input{sections/question4.tex}
+\input{sections/question5.tex}
+
+\newpage
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}

@@ -78,3 +78,4 @@ tweets/
 *.blg
 *.bib
 %OUTDIR%
+.idea
