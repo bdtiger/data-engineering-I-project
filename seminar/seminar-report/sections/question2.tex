@@ -1,2 +1,14 @@
 \section{Question 2: Data Formats and Storage}
 % Write your answer for Question 2 here.
+
+In distributed data processing, disk I/O and network bandwidth are primary bottlenecks. Consequently, the choice of data format dictates not only storage efficiency but also CPU overhead and query latency, fundamentally shaping the technological architecture of big data solutions.
+
+\textbf{Row vs. Columnar and Text vs. Binary:} Row-oriented, text-based formats like CSV store data sequentially by record. While highly usable due to their human-readability and simplicity for initial data ingestion, they are severely penalized in analytical (OLAP) workloads. Text parsing is CPU-intensive, and querying a single attribute requires reading entire records from the disk.
+
+Conversely, columnar binary formats like \textbf{Apache Parquet} are heavily optimized for analytics \cite{Zen+23}. By storing values of the same column contiguously, Parquet enables engines like Spark to perform \textit{projection pushdown}—reading only the specific columns required for a query and entirely skipping irrelevant data. Furthermore, binary formats avoid the overhead of string parsing and allow for aggressive, type-specific compression techniques (such as Run-Length Encoding and dictionary encoding), drastically reducing the disk footprint and I/O wait times \cite{Zen+23}.
+
+\textbf{Schema-on-Read vs. Schema-on-Write:} Traditional relational databases mandate "schema-on-write," requiring data to be validated and structured during ingestion. As noted in literature discussing the "data deluge," this loading phase acts as a severe bottleneck, heavily penalizing the ingestion speed of massive scientific datasets \cite{Ker+11}. To bypass this, early big data architectures shifted to "schema-on-read," storing raw files in data lakes and applying structure only at query time. While this maximized ingestion speed and flexibility for exploratory analysis, it often sacrificed query performance and data integrity.
+
+\textbf{The Landscape Shift and the Data Lakehouse:} Formats like Parquet and Avro changed this landscape by embedding self-describing schema metadata directly within the binary files. Avro provides highly efficient row-based serialization ideal for streaming, while Parquet dominates analytical reads.
+
+The concept of the \textbf{data lakehouse} (e.g., Delta Lake) represents the next evolutionary step. It builds upon open columnar formats like Parquet by adding a transactional metadata layer. This brings "schema-on-write" benefits—such as ACID transactions, strict schema enforcement, and data mutation capabilities—directly to the raw storage layer. Ultimately, the lakehouse bridges the divide, offering the high performance and reliability of a traditional data warehouse alongside the infinite scalability of a data lake.
