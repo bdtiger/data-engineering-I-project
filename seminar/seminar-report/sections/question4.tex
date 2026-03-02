@@ -1,2 +1,17 @@
 \section{Question 4: The Rise of NoSQL}
-% Write your answer for Question 4 here.
+\label{sec:question4}
+
+NoSQL databases like MongoDB and Apache Cassandra have gained popularity because they address key limitations of traditional relational databases, such as MySQL and Oracle. Relational databases excel in structured data and complex transactions but struggle with scalability, flexibility, and real-time processing, which are critical requirements for modern applications like social media, IoT, and genomics \cite{wu2014, chen2014}.
+
+\subsection*{CAP Theorem and Trade-offs}
+The CAP theorem (Consistency, Availability, Partition Tolerance) explains the fundamental trade-offs in distributed systems. NoSQL databases prioritize different aspects. Cassandra focuses on Availability and Partition Tolerance (AP), ensuring continuous operation even during network failures, though it may occasionally show outdated data. MongoDB offers flexibility, allowing configurations for either Consistency and Partition Tolerance (CP) or AP, depending on application needs \cite{scylla2025, wikipedia2026}.
+
+Most NoSQL systems favor AP because modern applications like social networks and e-commerce require uptime and speed over perfect consistency.
+
+\subsection*{Workloads Ill-Served by Relational Systems}
+Relational databases struggle with high-velocity data (e.g., real-time analytics, IoT sensor streams), unstructured or semi-structured data (e.g., genomic sequences, social media posts), and distributed environments where data is generated across multiple locations.
+
+NoSQL databases like HBase, used in the Genome Analysis Toolkit, efficiently handle these challenges, offering faster writes, better scalability, and lower costs \cite{mckenna2010, taylor2010}.
+
+\subsection*{Overcorrection and the Return of Relational/NewSQL}
+While NoSQL excels in scalability, some applications, such as financial transactions, require ACID compliance, which NoSQL often sacrifices for speed. Hybrid systems like NewSQL (e.g., Google Spanner) now combine NoSQL's scalability with relational reliability, ensuring both performance and accuracy \cite{memgraph2023}.
