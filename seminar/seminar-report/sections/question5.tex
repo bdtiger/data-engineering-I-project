@@ -1,5 +1,4 @@
 \section{Question 5: Scalability -- Theory and Practice}
-\section{Question 5: Scalability -- Theory and Practice}
 
 Scalability is a core principle in distributed systems and refers to the ability of a system to handle increasing workloads by proportionally increasing computational resources. From a theoretical perspective, scalability is fundamentally constrained by limits of parallelism. Amdahl’s Law states that the maximum achievable speedup of a parallel system is limited by the fraction of computation that remains sequential. Even with a large number of processors, the sequential component becomes a bottleneck. In contrast, Gustafson’s Law argues that when system size increases, workloads typically grow proportionally, allowing effective utilization of additional processors. This distinction corresponds to the difference between strong scaling, where runtime decreases for a fixed workload, and weak scaling, where workload increases proportionally with resources while runtime remains stable. Empirical studies show that architectural overhead, such as centralized coordination mechanisms, can significantly limit scalability at large scale \cite{lunacek2013}.
 
