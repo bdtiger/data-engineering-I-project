@@ -41,3 +41,97 @@
   booktitle={Proceedings of the 11th Annual Conference on Innovative Data Systems Research (CIDR)},
   year={2021}
 }
+
+@Article{computers3040117,
+AUTHOR = {Shahrivari, Saeed},
+TITLE = {Beyond Batch Processing: Towards Real-Time and Streaming Big Data},
+JOURNAL = {Computers},
+VOLUME = {3},
+YEAR = {2014},
+NUMBER = {4},
+PAGES = {117--129},
+URL = {https://www.mdpi.com/2073-431X/3/4/117},
+ISSN = {2073-431X},
+ABSTRACT = {Today, big data are generated from many sources, and there is a huge demand for storing, managing, processing, and querying on big data. The MapReduce model and its counterpart open source implementation Hadoop, has proven itself as the de facto solution to big data processing, and is inherently designed for batch and high throughput processing jobs. Although Hadoop is very suitable for batch jobs, there is an increasing demand for non-batch requirements like: interactive jobs, real-time queries, and big data streams. Since Hadoop is not suitable for these non-batch workloads, new solutions are proposed to these new challenges. In this article, we discussed two categories of these solutions: real-time processing, and stream processing of big data. For each category, we discussed paradigms, strengths and differences to Hadoop. We also introduced some practical systems and frameworks for each category. Finally, some simple experiments were performed to approve effectiveness of new solutions compared to available Hadoop-based solutions.},
+DOI = {10.3390/computers3040117}
+}
+
+@inproceedings{10.1145/2723372.2742788,
+author = {Kulkarni, Sanjeev and Bhagat, Nikunj and Fu, Maosong and Kedigehalli, Vikas and Kellogg, Christopher and Mittal, Sailesh and Patel, Jignesh M. and Ramasamy, Karthik and Taneja, Siddarth},
+title = {Twitter Heron: Stream Processing at Scale},
+year = {2015},
+isbn = {9781450327589},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2723372.2742788},
+doi = {10.1145/2723372.2742788},
+abstract = {Storm has long served as the main platform for real-time analytics at Twitter. However, as the scale of data being processed in real-time at Twitter has increased, along with an increase in the diversity and the number of use cases, many limitations of Storm have become apparent. We need a system that scales better, has better debug-ability, has better performance, and is easier to manage -- all while working in a shared cluster infrastructure. We considered various alternatives to meet these needs, and in the end concluded that we needed to build a new real-time stream data processing system. This paper presents the design and implementation of this new system, called Heron. Heron is now the de facto stream data processing engine inside Twitter, and in this paper we also share our experiences from running Heron in production. In this paper, we also provide empirical evidence demonstrating the efficiency and scalability of Heron.},
+booktitle = {Proceedings of the 2015 ACM SIGMOD International Conference on Management of Data},
+pages = {239–250},
+numpages = {12},
+keywords = {stream data processing systems, real-time data processing.},
+location = {Melbourne, Victoria, Australia},
+series = {SIGMOD '15}
+}
+
+@inproceedings{10.1145/2588555.2595641,
+author = {Toshniwal, Ankit and Taneja, Siddarth and Shukla, Amit and Ramasamy, Karthik and Patel, Jignesh M. and Kulkarni, Sanjeev and Jackson, Jason and Gade, Krishna and Fu, Maosong and Donham, Jake and Bhagat, Nikunj and Mittal, Sailesh and Ryaboy, Dmitriy},
+title = {Storm@twitter},
+year = {2014},
+isbn = {9781450323765},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2588555.2595641},
+doi = {10.1145/2588555.2595641},
+abstract = {This paper describes the use of Storm at Twitter. Storm is a real-time fault-tolerant and distributed stream data processing system. Storm is currently being used to run various critical computations in Twitter at scale, and in real-time. This paper describes the architecture of Storm and its methods for distributed scale-out and fault-tolerance. This paper also describes how queries (aka. topologies) are executed in Storm, and presents some operational stories based on running Storm at Twitter. We also present results from an empirical evaluation demonstrating the resilience of Storm in dealing with machine failures. Storm is under active development at Twitter and we also present some potential directions for future work.},
+booktitle = {Proceedings of the 2014 ACM SIGMOD International Conference on Management of Data},
+pages = {147–156},
+numpages = {10},
+keywords = {stream data management, real-time query processing},
+location = {Snowbird, Utah, USA},
+series = {SIGMOD '14}
+}
+
+
+@article{df177547a4364bb0a7e2470b83025bb0,
+title = "Apache Flink{\texttrademark}: Stream and Batch Processing in a Single Engine",
+abstract = "Apache Flink is an open-source system for processing streaming and batch data. Flink is built on the philosophy that many classes of data processing applications, including real-time analytics, continuous data pipelines, historic data processing (batch), and iterative algorithms (machine learning, graph analysis) can be expressed and executed as pipelined fault-tolerant dataflows. In this paper, we present Flink{\textquoteright}s architecture and expand on how a (seemingly diverse) set of use cases can be unified under asingle execution model.",
+author = "Paris Carbone and Asterios Katsifodimos and Stephan Ewen and Volker Markl and Seif Haridi and Kostas Tzoumas",
+year = "2015",
+language = "English",
+volume = "36",
+pages = "28--38",
+journal = "Bulletin of the IEEE Computer Society Technical Committee on Data Engineering",
+publisher = "IEEE",
+number = "4",
+}
+
+@article{li2018challenges,
+  title={Challenges and experiences in building an efficient apache beam runner for IBM streams},
+  author={Li, Shen and Gerver, Paul and MacMillan, John and Debrunner, Daniel and Marshall, William and Wu, Kun-Lung},
+  journal={Proceedings of the VLDB Endowment},
+  volume={11},
+  number={12},
+  pages={1742--1754},
+  year={2018},
+  publisher={VLDB Endowment}
+}
+
+@article{10.14778/2824032.2824076,
+author = {Akidau, Tyler and Bradshaw, Robert and Chambers, Craig and Chernyak, Slava and Fern\'{a}ndez-Moctezuma, Rafael J. and Lax, Reuven and McVeety, Sam and Mills, Daniel and Perry, Frances and Schmidt, Eric and Whittle, Sam},
+title = {The dataflow model: a practical approach to balancing correctness, latency, and cost in massive-scale, unbounded, out-of-order data processing},
+year = {2015},
+issue_date = {August 2015},
+publisher = {VLDB Endowment},
+volume = {8},
+number = {12},
+issn = {2150-8097},
+url = {https://doi.org/10.14778/2824032.2824076},
+doi = {10.14778/2824032.2824076},
+abstract = {Unbounded, unordered, global-scale datasets are increasingly common in day-to-day business (e.g. Web logs, mobile usage statistics, and sensor networks). At the same time, consumers of these datasets have evolved sophisticated requirements, such as event-time ordering and windowing by features of the data themselves, in addition to an insatiable hunger for faster answers. Meanwhile, practicality dictates that one can never fully optimize along all dimensions of correctness, latency, and cost for these types of input. As a result, data processing practitioners are left with the quandary of how to reconcile the tensions between these seemingly competing propositions, often resulting in disparate implementations and systems.We propose that a fundamental shift of approach is necessary to deal with these evolved requirements in modern data processing. We as a field must stop trying to groom unbounded datasets into finite pools of information that eventually become complete, and instead live and breathe under the assumption that we will never know if or when we have seen all of our data, only that new data will arrive, old data may be retracted, and the only way to make this problem tractable is via principled abstractions that allow the practitioner the choice of appropriate tradeoffs along the axes of interest: correctness, latency, and cost.In this paper, we present one such approach, the Dataflow Model, along with a detailed examination of the semantics it enables, an overview of the core principles that guided its design, and a validation of the model itself via the real-world experiences that led to its development.},
+journal = {Proc. VLDB Endow.},
+month = aug,
+pages = {1792–1803},
+numpages = {12}
+}
+
