@@ -1,6 +1,6 @@
 \section{Question 3: The Big Data Ecosystem -- Is There a Logic?}
 
-The big data ecosystem is not fragmented. It is a coherent, reactive progression. Each generation of technologies emerged to solve the critical bottlenecks---volume, latency, or system coupling---of its predecessors.
+The big data ecosystem is not fragmented. It is a coherent, reactive progression. Each generation of technologies emerged to solve the critical bottlenecks like volume, latency, or system coupling of its predecessors.
 
 \subsection{The Volume Problem: Disk-Bound Batch Processing}
 Traditional relational databases could not scale horizontally. Google introduced GFS and MapReduce \cite{dean2004mapreduce}, later open-sourced as Apache Hadoop and HDFS, to handle massive data volumes on commodity hardware. But Hadoop had a fundamental flaw: aggressive disk I/O. MapReduce wrote intermediate results to disk after every computation phase. This made it highly fault-tolerant but terrible for low-latency queries and iterative machine learning \cite{zaharia2012resilient}.
