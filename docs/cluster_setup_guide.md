@@ -12,8 +12,8 @@
 |------|----------|-------------|-----------|
 | Master | `group-32-master` | `192.168.2.137` | `130.238.27.251` |
 | Worker 1 | `group-32-worker-1` | `192.168.2.242` | — |
-| Worker 2 | `group-32-worker-2` | TBD | — |
-| Worker 3 | `group-32-worker-3` | TBD | — |
+| Worker 2 | `group-32-worker-2` | `192.168.2.146` | — |
+| Worker 3 | `group-32-worker-3` | `192.168.2.252` | — |
 
 > Workers have no Floating IP — accessible only from Master via internal network.
 
@@ -93,11 +93,9 @@ Add entries for all cluster nodes:
 127.0.0.1       localhost
 192.168.2.137   group-32-master
 192.168.2.242   group-32-worker-1
-<worker-2-ip>   group-32-worker-2
-<worker-3-ip>   group-32-worker-3
+192.168.2.146   group-32-worker-2
+192.168.2.252   group-32-worker-3
 ```
-
-> Replace `<worker-2-ip>` and `<worker-3-ip>` with actual IPs once those VMs are created. Worker IPs are visible in the OpenStack dashboard.
 
 Verify hostname resolution:
 
@@ -166,7 +164,7 @@ vim ~/hadoop-3.4.1/etc/hadoop/hdfs-site.xml
 <configuration>
   <property>
     <name>dfs.replication</name>
-    <value>1</value>
+    <value>2</value>
   </property>
   <property>
     <name>dfs.namenode.name.dir</name>
@@ -178,8 +176,6 @@ vim ~/hadoop-3.4.1/etc/hadoop/hdfs-site.xml
   </property>
 </configuration>
 ```
-
-> **Note:** Replication is set to `1` initially. Change to `2` once all 3 Workers are active.
 
 Create the data directories:
 
@@ -231,9 +227,10 @@ vim ~/hadoop-3.4.1/etc/hadoop/workers
 
 ```
 group-32-worker-1
+group-32-worker-2
+group-32-worker-3
 ```
 
-> Add `group-32-worker-2` and `group-32-worker-3` here when those nodes are ready.
 
 #### `hadoop-env.sh` — JAVA_HOME for Hadoop daemons
 
@@ -298,9 +295,9 @@ vim ~/spark/conf/workers
 
 ```
 group-32-worker-1
+group-32-worker-2
+group-32-worker-3
 ```
-
-> Add `group-32-worker-2` and `group-32-worker-3` here when those nodes are ready.
 
 ---
 
@@ -364,8 +361,8 @@ Final `/etc/hosts` (all nodes):
 127.0.0.1       localhost
 192.168.2.137   group-32-master
 192.168.2.242   group-32-worker-1
-<worker-2-ip>   group-32-worker-2
-<worker-3-ip>   group-32-worker-3
+192.168.2.146   group-32-worker-2
+192.168.2.252   group-32-worker-3
 ```
 
 ---
@@ -413,7 +410,7 @@ Verify DataNodes are live:
 
 ```bash
 hdfs dfsadmin -report | grep "Live datanodes"
-# Expected: Live datanodes (1)  ← increases as workers are added
+# Expected: Live datanodes (3)
 ```
 
 ---
@@ -431,11 +428,19 @@ jps
 # Expected: NameNode, SecondaryNameNode, ResourceManager
 ```
 
-Verify Worker (from Master):
+Verify all Workers (from Master):
 
 ```bash
-ssh ubuntu@group-32-worker-1 jps
-# Expected: DataNode, NodeManager
+ssh ubuntu@group-32-worker-1 jps  # Expected: DataNode, NodeManager
+ssh ubuntu@group-32-worker-2 jps  # Expected: DataNode, NodeManager
+ssh ubuntu@group-32-worker-3 jps  # Expected: DataNode, NodeManager
+```
+
+Verify YARN sees all 3 nodes:
+
+```bash
+yarn node -list | grep RUNNING
+# Expected: 3 lines, one per worker
 ```
 
 ---
@@ -454,16 +459,41 @@ jps
 # Expected: NameNode, SecondaryNameNode, ResourceManager, Master
 ```
 
-Verify Worker:
+Verify all Workers:
 
 ```bash
-ssh ubuntu@group-32-worker-1 jps
-# Expected: DataNode, NodeManager, Worker
+ssh ubuntu@group-32-worker-1 jps  # Expected: DataNode, NodeManager, Worker
+ssh ubuntu@group-32-worker-2 jps  # Expected: DataNode, NodeManager, Worker
+ssh ubuntu@group-32-worker-3 jps  # Expected: DataNode, NodeManager, Worker
 ```
 
 ---
 
-### Step 3.5: End-to-End Smoke Test
+### Step 3.5: Set Up HDFS Directories and Apply Replication
+
+Create the project data directories on HDFS:
+
+```bash
+hdfs dfs -mkdir -p /data/nyc-taxi
+hdfs dfs -mkdir -p /data/nyc-taxi-clean
+hdfs dfs -mkdir -p /data/results
+```
+
+Apply replication factor to all HDFS data:
+
+```bash
+hdfs dfs -setrep -R 2 /
+```
+
+Verify:
+
+```bash
+hdfs dfs -ls /data/
+```
+
+---
+
+### Step 3.6: End-to-End Smoke Test
 
 ```bash
 spark-submit --master spark://group-32-master:7077 \
@@ -515,33 +545,77 @@ stop-dfs.sh
 
 ---
 
-## Part 6: Adding Workers 2 and 3
+## Part 6: Adding a New Worker Node
 
-Once Workers 2 and 3 are ready:
+Use this if you need to expand the cluster beyond the current 3 workers (e.g. adding `group-32-worker-4`).
 
-1. Update `/etc/hosts` on all 4 nodes with the new IPs
-2. Add to Hadoop workers file on Master:
-   ```bash
-   echo 'group-32-worker-2' >> ~/hadoop-3.4.1/etc/hadoop/workers
-   echo 'group-32-worker-3' >> ~/hadoop-3.4.1/etc/hadoop/workers
-   ```
-3. Add to Spark workers file on Master:
-   ```bash
-   echo 'group-32-worker-2' >> ~/spark/conf/workers
-   echo 'group-32-worker-3' >> ~/spark/conf/workers
-   ```
-4. Change HDFS replication from `1` to `2` in `hdfs-site.xml`:
-   ```xml
-   <property>
-     <name>dfs.replication</name>
-     <value>2</value>
-   </property>
-   ```
-5. Restart the cluster (Steps 3.2–3.4)
-6. Apply the new replication factor to existing data:
-   ```bash
-   hdfs dfs -setrep -R 2 /
-   ```
+### Step 6.1: Create the VM
+
+1. In the OpenStack dashboard, go to **Compute → Instances → Launch Instance**
+2. Use the `group-32-cluster-base` snapshot as the source image
+3. Flavor: `ssc.medium` (2 vCPU, 4 GB RAM)
+4. Note the new worker's **internal IP** from the OpenStack dashboard
+
+### Step 6.2: Set Hostname on the New Worker
+
+```bash
+ssh ubuntu@<new-worker-ip>
+sudo hostnamectl set-hostname group-32-worker-4
+exit
+```
+
+### Step 6.3: Update `/etc/hosts` on All Nodes
+
+Add the new entry on **every node** (Master + all existing Workers):
+
+```bash
+sudo vim /etc/hosts
+# Add: <new-worker-ip>   group-32-worker-4
+```
+
+### Step 6.4: Update Hadoop and Spark Workers Files (on Master)
+
+```bash
+echo 'group-32-worker-4' >> ~/hadoop-3.4.1/etc/hadoop/workers
+echo 'group-32-worker-4' >> ~/spark/conf/workers
+```
+
+### Step 6.5: Start Daemons on the New Worker (no full cluster restart needed)
+
+```bash
+# Start DataNode
+ssh ubuntu@group-32-worker-4 "~/hadoop-3.4.1/bin/hdfs --daemon start datanode"
+
+# Start NodeManager
+ssh ubuntu@group-32-worker-4 "~/hadoop-3.4.1/bin/yarn --daemon start nodemanager"
+
+# Start Spark Worker
+start-workers.sh
+```
+
+### Step 6.6: Verify
+
+```bash
+# HDFS — count should increase by 1
+hdfs dfsadmin -report | grep "Live datanodes"
+
+# YARN
+yarn node -list | grep RUNNING
+
+# Spark Worker
+ssh ubuntu@group-32-worker-4 jps
+# Expected: DataNode, NodeManager, Worker
+```
+
+### Step 6.7: Rebalance HDFS Data
+
+HDFS does not automatically move existing blocks to the new DataNode. Trigger a rebalance:
+
+```bash
+hdfs balancer -threshold 10
+```
+
+> This runs in the foreground and may take several minutes depending on data size. The threshold `10` means blocks are redistributed until no node is more than 10% above/below the average utilization.
 
 ---
 

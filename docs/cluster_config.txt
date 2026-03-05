@@ -15,12 +15,12 @@ worker1.hostname    = group-32-worker-1
 worker1.roles       = DataNode, Spark Executor, NodeManager
 worker1.volume_gb   = 25
 
-worker2.internal_ip = 
+worker2.internal_ip = 192.168.2.146
 worker2.hostname    = group-32-worker-2
 worker2.roles       = DataNode, Spark Executor, NodeManager
 worker2.volume_gb   = 25
 
-worker3.internal_ip = 
+worker3.internal_ip = 192.168.2.252
 worker3.hostname    = group-32-worker-3
 worker3.roles       = DataNode, Spark Executor, NodeManager
 worker3.volume_gb   = 25
@@ -37,6 +37,6 @@ hdfs.results_path   = /data/results/
 
 # ─── STATUS ────────────────────────────────────────────────
 # Master:  provisioned ✓
-# Worker1: not yet
-# Worker2: not yet
-# Worker3: not yet
+# Worker1: provisioned ✓
+# Worker2: provisioned ✓
+# Worker3: provisioned ✓
