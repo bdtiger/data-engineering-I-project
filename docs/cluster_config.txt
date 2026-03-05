@@ -1,0 +1,42 @@
+# Cluster Configuration — Group 32
+# Data Engineering I (1TD169) VT 2026
+# OpenStack SSC — ssc.medium (2 vCPU, 4 GB RAM) per VM
+
+# ─── MASTER NODE ──────────────────────────────────────────
+master.public_ip  = 130.238.27.251
+master.internal_ip = 192.168.2.137
+master.hostname   = group-32-master
+master.roles      = NameNode, Spark Driver, ResourceManager
+master.volume_gb  = 25
+
+# ─── WORKER NODES ─────────────────────────────────────────
+worker1.internal_ip = 192.168.2.242
+worker1.hostname    = group-32-worker-1
+worker1.roles       = DataNode, Spark Executor, NodeManager
+worker1.volume_gb   = 25
+
+worker2.internal_ip = 
+worker2.hostname    = group-32-worker-2
+worker2.roles       = DataNode, Spark Executor, NodeManager
+worker2.volume_gb   = 25
+
+worker3.internal_ip = 
+worker3.hostname    = group-32-worker-3
+worker3.roles       = DataNode, Spark Executor, NodeManager
+worker3.volume_gb   = 25
+
+# ─── HDFS ──────────────────────────────────────────────────
+hdfs.replication    = 2
+hdfs.data_path      = /data/nyc-taxi/
+hdfs.clean_path     = /data/nyc-taxi-clean/
+hdfs.results_path   = /data/results/
+
+# ─── SSH ───────────────────────────────────────────────────
+# ssh -i <key>.pem ubuntu@130.238.27.251
+# From master → workers: ssh worker1 (key-based, no password)
+
+# ─── STATUS ────────────────────────────────────────────────
+# Master:  provisioned ✓
+# Worker1: not yet
+# Worker2: not yet
+# Worker3: not yet

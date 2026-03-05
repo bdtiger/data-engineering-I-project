@@ -9,14 +9,14 @@
 
 ### Team Members
 
-| Name |
-|------|
-| Abdur Rehman Khalid |
-| Arnab Kumar Ghosh |
-| Dip Chowdhury |
-| Muhammad Umair |
-| Pradip Kumar Das |
-| Zihao Yang |
+| Name | Role |
+|------|------|
+| Abdur Rehman Khalid | TBA |
+| Arnab Kumar Ghosh | Infrastructure Engineer and Core Logic Developer |
+| Dip Chowdhury | TBA |
+| Muhammad Umair | TBA |
+| Pradip Kumar Das | TBA |
+| Zihao Yang | TBA |
 
 ---
 
@@ -42,7 +42,8 @@ project-repo/
 ├── requirements.txt           # Python dependencies
 ├── data/                      # Sample data only (large files are in .gitignore)
 ├── docs/
-│   └── PROJECT_PLAN.md        # Detailed project plan & task tracking
+│   ├── PROJECT_PLAN.md        # Detailed project plan & task tracking
+│   └── cluster-setup-guide.md # Step-by-step cluster installation guide
 ├── infrastructure/            # Scripts to provision VMs on OpenStack SSC
 ├── src/
 │   ├── config.py              # Configuration (HDFS paths, Spark settings, constants)
@@ -56,6 +57,15 @@ project-repo/
     ├── report.tex             # LaTeX report source
     └── references.bib         # BibTeX references
 ```
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) | Full project plan — phases, grading targets, experiment design, submission checklist |
+| [docs/cluster-setup-guide.md](docs/cluster-setup-guide.md) | Step-by-step guide for provisioning and configuring the Hadoop + Spark cluster on OpenStack SSC |
 
 ---
 

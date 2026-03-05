@@ -92,9 +92,10 @@ project-repo/
 
 **Owner:** Infrastructure Engineer
 
-- [ ] Provision **4 VMs** on OpenStack SSC (1 Master + 3 Workers)
+- [x] Provision **Master VM** on OpenStack SSC — `130.238.27.251` (Floating IP attached) ✓
+- [ ] Provision **3 Worker VMs** on OpenStack SSC
   - Flavor: `ssc.medium` (2 vCPU, 4 GB RAM each)
-  - Attach **1 Floating IP** to Master only; Workers use internal IPs
+  - Workers use internal IPs only (no Floating IP)
 - [ ] Set up SSH key-based access from Master to all Workers
 - [ ] Install **Java** (OpenJDK 8 or 11) on all nodes
 - [ ] Install & configure **Hadoop / HDFS** on all nodes

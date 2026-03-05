@@ -1,0 +1,254 @@
+first installed Java and set the path
+2.1.3 Step 1.3: Install Java Development Kit
+Hadoop is written in Java and requires the Java Development Kit (JDK) to run.
+1. Update package lists:
+sudo apt update
+2. Install required packages:
+sudo apt install openjdk-11-jdk-headless net-tools -y
+3. Verify Java installation:
+java -version
+javac -version
+You should see version 11.0.x for both.
+2.1.4 Step 1.4: Set JAVA_HOME Environment Variable
+Hadoop needs to know where Java is installed. We set the JAVA_HOME environment variable.
+1. Add to system-wide environment:
+sudo nano /etc/environment
+7
+Data Engineering I - 1TD169 Assignment A2
+2. Add this line:
+JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+Save and exit.
+3. Apply to current session:
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+4. Verify:
+echo $JAVA_HOME
+ls $JAVA_HOME/bin/java
+
+
+
+next installed hadoop
+Step 1.5: Download and Install Hadoop
+Now we will get Hadoop itself.
+1. Navigate to your home directory:
+cd ~
+2. Download Hadoop 3.4.1:
+Versions can be found on the releases page: https://hadoop.apache.org/releases.html
+We use version 3.4.1, and use the binary download link (not source, not aarch64):
+wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+This downloads ~600 MB.
+3. Extract the archive:
+tar -xzf hadoop-3.4.1.tar.gz
+This takes a while, and creates a hadoop-3.4.1 directory with all Hadoop files.
+4. Verify installation:
+./hadoop-3.4.1/bin/hadoop version
+
+set the hadoop path
+echo 'export HADOOP_HOME=~/hadoop-3.4.1' >> ~/.bashrc
+echo 'export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin' >> ~/.bashrc
+echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/' >> ~/.bashrc
+source ~/.bashrc
+
+
+configure for hadoop 
+core-site.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://group-32-master:9000</value>
+  </property>
+</configuration>
+
+
+hdfs-site.xml with datanode and namenode dir
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+  <property>
+    <name>dfs.replication</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:///home/ubuntu/hadoop-data/namenode</value>
+  </property>
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:///home/ubuntu/hadoop-data/datanode</value>
+  </property>
+</configuration>
+
+then create the directories 
+mkdir -p ~/hadoop-data/namenode ~/hadoop-data/datanode
+
+
+now yarn-site.xml
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<configuration>
+
+<!-- Site specific YARN configuration properties -->
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>group-32-master</value>
+  </property>
+</configuration>
+
+mapred-site.xml — needed for YARN to run MapReduce jobs
+vim ~/hadoop-3.4.1/etc/hadoop/mapred-site.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+</configuration>
+
+
+set the workers into hadoop to hadoop-3.4.1/etc/hadoop/workers
+group-32-worker-1
+
+
+Set JAVA_HOME in hadoop-env.sh
+echo 'export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/' >> ~/hadoop-3.4.1/etc/hadoop/hadoop-env.sh
+
+generate the ssh key 
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+
+install Spark
+wget https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
+tar -xzf spark-3.5.1-bin-hadoop3.tgz
+rm spark-3.5.1-bin-hadoop3.tgz
+mv spark-3.5.1-bin-hadoop3 spark
+
+echo 'export SPARK_HOME=~/spark' >> ~/.bashrc
+echo 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin' >> ~/.bashrc
+source ~/.bashrc
+
+
+configure spark-env.sh
+cp ~/spark/conf/spark-env.sh.template ~/spark/conf/spark-env.sh
+cat >> ~/spark/conf/spark-env.sh <<'EOF'
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+export HADOOP_CONF_DIR=~/hadoop-3.4.1/etc/hadoop
+export SPARK_MASTER_HOST=group-32-master
+EOF
+
+Now set up the Spark workers file:
+vim ~/spark/conf/workers
+group-32-worker-1
+
+install pyspark
+sudo apt install python3-pip -y
+pip3 install pyspark==3.5.1
+
+
+take snapshot to create cluster-base
+========
+launch the worker 1
+logged into the worker 1 from master node
+
+update the hosts file in the worker
+vim /etc/hosts
+192.168.2.242  group-32-worker-1
+
+
+then logged in into the maseter and update the hosts file to add the worker1 info
+192.168.2.242  group-32-worker-1
+
+verify ssh from master to worker 1
+ssh ubuntu@group-32-worker-1 hostname
+
+Now format the NameNode on Master (only once):
+hdfs namenode -forma
+
+Start HDFS:
+start-dfs.sh
+jps
+
+NameNode is running on Master. But DataNode should be on Worker 1, not Master. Check:
+
+hdfs dfsadmin -report | grep "Live datanodes"
+
+ the cluster is working! Master + Worker 1 are running correctly.
+
+Now start YARN:
+start-yarn.sh
+Then verify:
+jps
+
+start spark 
+start-master.sh
+start-workers.sh
+
+jps
+
+check the worker
+ssh ubuntu@group-32-worker-1 jps
+
+You should see Worker listed. Then do a quick end-to-end test:
+spark-submit --master spark://group-32-master:7077 /home/ubuntu/spark/examples/src/main/python/pi.py 10
+
+
+
+ ssh -i ~/.ssh/de1-course-snic-key.pem \
+    -L 8888:localhost:8888 \
+    -L 4040:localhost:4040 \
+    -L 4041:localhost:4041 \
+    -L 4042:localhost:4042 \
+    -L 8080:localhost:8080 \
+    -L 9870:localshost:9870 \
+    ubuntu@130.238.27.251
+
