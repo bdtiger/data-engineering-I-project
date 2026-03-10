@@ -4,6 +4,7 @@ pyspark>=3.5.0
 # --- Data Processing & Analysis ---
 pandas>=2.1.0
 numpy>=1.26.0
+pyarrow>=14.0.0
 
 # --- Visualization (for report figures & notebooks) ---
 matplotlib>=3.8.0

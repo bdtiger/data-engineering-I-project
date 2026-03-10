@@ -40,3 +40,13 @@ hdfs.results_path   = /data/results/
 # Worker1: provisioned ✓
 # Worker2: provisioned ✓
 # Worker3: provisioned ✓
+
+
+ ssh -i ~/.ssh/de1-course-snic-key.pem \
+    -L 8888:localhost:8888 \
+    -L 4040:localhost:4040 \
+    -L 4041:localhost:4041 \
+    -L 4042:localhost:4042 \
+    -L 8080:192.168.2.218:8080 \
+    -L 9870:192.168.2.218:9870 \
+    ubuntu@130.238.27.251
