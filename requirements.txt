@@ -1,5 +1,9 @@
 # --- Core: Apache Spark (PySpark) ---
-pyspark>=3.5.0
+pyspark==4.1.1
+findspark                  # Added for Spark context initialization
+
+# --- Development & Notebooks ---
+jupyterlab                 # Added for notebook environment
 
 # --- Data Processing & Analysis ---
 pandas>=2.1.0
