@@ -11,7 +11,7 @@
 
 | Name | Role |
 |------|------|
-| Abdur Rehman Khalid | TBA |
+| Abdur Rehman Khalid | Data Engineer |
 | Arnab Kumar Ghosh | Infrastructure Engineer and Core Logic Developer |
 | Dip Chowdhury | TBA |
 | Muhammad Umair | TBA |
