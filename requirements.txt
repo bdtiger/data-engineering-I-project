@@ -1,5 +1,5 @@
 # --- Core: Apache Spark (PySpark) ---
-pyspark==4.1.1
+pyspark==3.5.1             # Downgraded to 3.5.1 for Java 11 compatibility
 findspark                  # Added for Spark context initialization
 
 # --- Development & Notebooks ---
@@ -8,10 +8,10 @@ jupyterlab                 # Added for notebook environment
 # --- Data Processing & Analysis ---
 pandas>=2.1.0
 numpy>=1.26.0
-pyarrow>=14.0.0
+pyarrow>=14.0.0            # Required for pandas to read Parquet files
 
 # --- Visualization (for report figures & notebooks) ---
-matplotlib>=3.8.0
+matplotlib>=3.8.0          # Required for scalability experiment plots
 seaborn>=0.13.0
 
 # --- Configuration & Utilities ---
