@@ -23,7 +23,7 @@ def run_etl():
             StructField("tpep_pickup_datetime", TimestampType(), True),
             StructField("tpep_dropoff_datetime", TimestampType(), True),
             StructField("trip_distance", DoubleType(), True),
-            StructField("PULocationID", LongType(), True),
+            StructField("PULocationID", IntegerType(), True),
             StructField("fare_amount", DoubleType(), True)
         ])
 
@@ -37,7 +37,7 @@ def run_etl():
         print("Cleaning and selecting required columns...")
         # We cast types for consistency and filter invalid records immediately
         cleaned_df = raw_df \
-            .withColumn("PULocationID", col("PULocationID").cast(LongType())) \
+            .withColumn("PULocationID", col("PULocationID").cast(IntegerType())) \
             .withColumn("fare_amount", col("fare_amount").cast(DoubleType())) \
             .withColumn("trip_distance", col("trip_distance").cast(DoubleType()))
     
