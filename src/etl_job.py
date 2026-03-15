@@ -15,21 +15,14 @@ def run_etl():
         .getOrCreate()
     
     try:
-        # Solution 2: Explicit "Narrow" Schema. 
-        # We completely omit 'airport_fee' and other irrelevant columns to bypass schema merging conflicts.
-        schema = StructType([
-            StructField("tpep_pickup_datetime", TimestampType(), True),
-            StructField("tpep_dropoff_datetime", TimestampType(), True),
-            StructField("trip_distance", DoubleType(), True),
-            StructField("PULocationID", LongType(), True), 
-            StructField("fare_amount", DoubleType(), True)
-        ])
+        # We use mergeSchema=true so Spark dynamically handles the INT32 vs INT64 
+        # physical differences across the years without crashing the Parquet reader.
 
         raw_data_path = f"{config.RAW_DATA_PATH}/*.parquet"
         print(f"Reading raw data from: {raw_data_path}")
         
         # Read with the explicit schema instead of mergeSchema=true
-        raw_df = spark.read.schema(schema).parquet(raw_data_path)
+        raw_df = spark.read.option("mergeSchema", "true").parquet(raw_data_path)
 
         # 3. Clean and Transform Data
         print("Cleaning and selecting required columns...")
