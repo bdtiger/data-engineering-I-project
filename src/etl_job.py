@@ -20,7 +20,10 @@ def run_etl():
         # Using mergeSchema handles slight schema variations across years/months
         raw_data_path = f"{config.RAW_DATA_PATH}/*.parquet"
         print(f"Reading raw data from: {raw_data_path}")
-        raw_df = spark.read.option("mergeSchema", "true").parquet(raw_data_path)
+        
+        # We drop the problematic 'airport_fee' column when analyzing schemas since it shifts 
+        # from INT to DOUBLE in newer datasets and breaks Spark's native merge logic without explicit schema provisioning
+        raw_df = spark.read.option("mergeSchema", "true").parquet(raw_data_path).drop("airport_fee")
 
         # 3. Clean and Transform Data
         print("Cleaning and selecting required columns...")
