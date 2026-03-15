@@ -22,7 +22,7 @@ def run_etl():
         # Using mergeSchema handles slight schema variations across years/months
         raw_data_path = f"{config.RAW_DATA_PATH}/*.parquet"
         print(f"Reading raw data from: {raw_data_path}")
-        raw_df = spark.read.option("mergeSchema", "true").parquet(raw_data_path)
+        raw_df = spark.read.parquet(raw_data_path)
 
         # 3. Clean and Transform Data
         print("Cleaning and selecting required columns...")
