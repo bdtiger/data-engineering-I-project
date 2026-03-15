@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, hour, unix_timestamp
-from pyspark.sql.types import DoubleType, LongType
+from pyspark.sql.types import DoubleType, LongType, StructType, StructField, StringType, TimestampType, IntegerType
 import config
 
 def run_etl():
@@ -16,14 +16,22 @@ def run_etl():
         .getOrCreate()
     
     try:
-        # 2. Read all raw Parquet files from HDFS at once
-        # Using mergeSchema handles slight schema variations across years/months
+        # Solution 2: Explicit "Narrow" Schema. 
+        # We completely omit 'airport_fee' and other irrelevant columns to bypass schema merging conflicts.
+        # By having the VectorizedReader disabled (above), Spark safely upcasts physical INT32 to BIGINT where needed.
+        schema = StructType([
+            StructField("tpep_pickup_datetime", TimestampType(), True),
+            StructField("tpep_dropoff_datetime", TimestampType(), True),
+            StructField("trip_distance", DoubleType(), True),
+            StructField("PULocationID", LongType(), True),
+            StructField("fare_amount", DoubleType(), True)
+        ])
+
         raw_data_path = f"{config.RAW_DATA_PATH}/*.parquet"
         print(f"Reading raw data from: {raw_data_path}")
         
-        # We drop the problematic 'airport_fee' column when analyzing schemas since it shifts 
-        # from INT to DOUBLE in newer datasets and breaks Spark's native merge logic without explicit schema provisioning
-        raw_df = spark.read.option("mergeSchema", "true").parquet(raw_data_path).drop("airport_fee")
+        # Read with the explicit schema instead of mergeSchema=true
+        raw_df = spark.read.schema(schema).parquet(raw_data_path)
 
         # 3. Clean and Transform Data
         print("Cleaning and selecting required columns...")
