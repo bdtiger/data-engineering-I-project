@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, hour, unix_timestamp
-from pyspark.sql.types import DoubleType, StructType, StructField, TimestampType, IntegerType
+from pyspark.sql.types import DoubleType, LongType, StructType, StructField, TimestampType
 import config
 
 def run_etl():
@@ -12,7 +12,6 @@ def run_etl():
     spark = SparkSession.builder \
         .master(config.SPARK_MASTER_URL) \
         .appName(config.ETL_APP_NAME) \
-        .config("spark.sql.parquet.enableVectorizedReader", "false") \
         .getOrCreate()
     
     try:
@@ -22,7 +21,7 @@ def run_etl():
             StructField("tpep_pickup_datetime", TimestampType(), True),
             StructField("tpep_dropoff_datetime", TimestampType(), True),
             StructField("trip_distance", DoubleType(), True),
-            StructField("PULocationID", IntegerType(), True), 
+            StructField("PULocationID", LongType(), True), 
             StructField("fare_amount", DoubleType(), True)
         ])
 
@@ -36,7 +35,7 @@ def run_etl():
         print("Cleaning and selecting required columns...")
         # We cast types for consistency and filter invalid records immediately
         cleaned_df = raw_df \
-            .withColumn("PULocationID", col("PULocationID").cast(IntegerType())) \
+            .withColumn("PULocationID", col("PULocationID").cast(LongType())) \
             .withColumn("fare_amount", col("fare_amount").cast(DoubleType())) \
             .withColumn("trip_distance", col("trip_distance").cast(DoubleType()))
     
