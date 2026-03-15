@@ -1,6 +1,8 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, hour, unix_timestamp
 from pyspark.sql.types import DoubleType, LongType, StructType, StructField, TimestampType
+from functools import reduce
+from pyspark.sql import DataFrame
 import config
 
 def run_etl():
@@ -21,8 +23,36 @@ def run_etl():
         raw_data_path = f"{config.RAW_DATA_PATH}/*.parquet"
         print(f"Reading raw data from: {raw_data_path}")
         
-        # Read with the explicit schema instead of mergeSchema=true
-        raw_df = spark.read.option("mergeSchema", "true").parquet(raw_data_path)
+        # Two columns have different physical types across the yearly Parquet files:
+        #   - PULocationID: INT32 in older files, INT64 in newer files.
+        #   - airport_fee: INT in some files, DOUBLE in others.
+        # Both mergeSchema=true and explicit schema fail because Spark reads every file's
+        # metadata first and tries to merge them into one schema before reading any data.
+        # It refuses to merge INT and DOUBLE even if we never asked for that column.
+        #
+        # Fix: read each file individually so there is nothing to merge, immediately
+        # cast and select only the 5 columns we need, then unionAll everything together.
+        # Since Spark is lazily evaluated, no data moves until the final .write() is called.
+
+        sc = spark.sparkContext
+        fs = sc._jvm.org.apache.hadoop.fs.FileSystem.get(sc._jsc.hadoopConfiguration())
+        Path = sc._jvm.org.apache.hadoop.fs.Path
+        statuses = fs.globStatus(Path(raw_data_path))
+        if not statuses:
+            raise Exception(f"No parquet files found in {config.RAW_DATA_PATH}")
+        file_paths = [s.getPath().toString() for s in statuses]
+        print(f"Found {len(file_paths)} files. Reading and standardizing iteratively...")
+        dfs = []
+        for file_path in file_paths:
+            df = spark.read.parquet(file_path)
+            dfs.append(df.select(
+                col("tpep_pickup_datetime"),
+                col("tpep_dropoff_datetime"),
+                col("PULocationID").cast(LongType()),
+                col("fare_amount").cast(DoubleType()),
+                col("trip_distance").cast(DoubleType())
+            ))
+        raw_df = reduce(DataFrame.unionAll, dfs)
 
         # 3. Clean and Transform Data
         print("Cleaning and selecting required columns...")
