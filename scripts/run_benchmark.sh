@@ -51,7 +51,7 @@ run_experiment() {
 # 1. H-1, 1 worker, 2 cores, 5 GB 
 run_experiment "H-1" 1 2 5
 run_experiment "H-2" 2 2 5
-run_experiment "H-4" 3 2 5
+run_experiment "H-3" 3 2 5
 
 
 echo "All experiments completed. Runtimes recorded in $RESULTS_FILE"
