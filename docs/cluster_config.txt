@@ -50,3 +50,9 @@ hdfs.results_path   = /data/results/
     -L 8080:192.168.2.137:8080 \
     -L 9870:192.168.2.137:9870 \
     ubuntu@130.238.27.251
+
+
+spark-submit \
+  --executor-cores 2 \
+  --num-executors 1 \
+  src/analysis_job.py

@@ -23,7 +23,8 @@ def run_etl():
         raw_data_path = f"{config.RAW_DATA_PATH}/*.parquet"
         print(f"Reading raw data from: {raw_data_path}")
         
-        # Two columns have different physical types across the yearly Parquet files:
+        # 2. Read all Parquet files with schema merging to handle type inconsistencies
+        #  Two columns have different physical types across the yearly Parquet files:
         #   - PULocationID: INT32 in older files, INT64 in newer files.
         #   - airport_fee: INT in some files, DOUBLE in others.
         # Both mergeSchema=true and explicit schema fail because Spark reads every file's
