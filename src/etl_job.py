@@ -12,9 +12,7 @@ def run_etl():
     spark = SparkSession.builder \
         .master(config.SPARK_MASTER_URL) \
         .appName(config.ETL_APP_NAME) \
-        .config("spark.dynamicAllocation.enabled", "true") \
-        .config("spark.shuffle.service.enabled", "false") \
-        .config("spark.dynamicAllocation.shuffleTracking.enabled", "true") \
+        .config("spark.sql.parquet.enableVectorizedReader", "false") \
         .getOrCreate()
     
     try:
@@ -22,7 +20,7 @@ def run_etl():
         # Using mergeSchema handles slight schema variations across years/months
         raw_data_path = f"{config.RAW_DATA_PATH}/*.parquet"
         print(f"Reading raw data from: {raw_data_path}")
-        raw_df = spark.read.parquet(raw_data_path)
+        raw_df = spark.read.option("mergeSchema", "true").parquet(raw_data_path)
 
         # 3. Clean and Transform Data
         print("Cleaning and selecting required columns...")

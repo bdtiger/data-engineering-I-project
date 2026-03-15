@@ -12,9 +12,7 @@ def run_analysis():
     spark = SparkSession.builder \
         .master(config.SPARK_MASTER_URL) \
         .appName(config.ANALYSIS_APP_NAME) \
-        .config("spark.dynamicAllocation.enabled", "true") \
-        .config("spark.shuffle.service.enabled", "false") \
-        .config("spark.dynamicAllocation.shuffleTracking.enabled", "true") \
+        .config("spark.sql.parquet.enableVectorizedReader", "false") \
         .getOrCreate()
         
     try:
