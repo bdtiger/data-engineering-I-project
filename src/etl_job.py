@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, hour, unix_timestamp
-from pyspark.sql.types import DoubleType, LongType, StructType, StructField, StringType, TimestampType, IntegerType
+from pyspark.sql.types import DoubleType, StructType, StructField, TimestampType, IntegerType
 import config
 
 def run_etl():
@@ -18,12 +18,11 @@ def run_etl():
     try:
         # Solution 2: Explicit "Narrow" Schema. 
         # We completely omit 'airport_fee' and other irrelevant columns to bypass schema merging conflicts.
-        # By having the VectorizedReader disabled (above), Spark safely upcasts physical INT32 to BIGINT where needed.
         schema = StructType([
             StructField("tpep_pickup_datetime", TimestampType(), True),
             StructField("tpep_dropoff_datetime", TimestampType(), True),
             StructField("trip_distance", DoubleType(), True),
-            StructField("PULocationID", IntegerType(), True),
+            StructField("PULocationID", IntegerType(), True), 
             StructField("fare_amount", DoubleType(), True)
         ])
 
@@ -58,8 +57,6 @@ def run_etl():
         
         # AGGRESSIVE PRUNING FOR STORAGE CONSTRAINTS
         # We keep ONLY the 4 columns needed for analysis_job.py. 
-        # By dropping timestamps, distance, and DOLocationID, this cleaned parquet 
-        # will take up very little space compared to the raw dataset.
         final_transformed_df = transformed_df.select(
             "PULocationID",
             "fare_amount",
@@ -82,4 +79,3 @@ def run_etl():
 
 if __name__ == "__main__":
     run_etl()
-    
