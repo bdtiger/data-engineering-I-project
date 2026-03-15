@@ -93,215 +93,22 @@
 \newpage
 
 % ============================================================
-% 1. Background (~400 words)
+% Sections
 % ============================================================
-\section{Background}
-\label{sec:background}
+\input{sections/background.tex}
+\newpage
 
-% Describe the scientific/application context of  dataset:
-% - What domain does it come from?
-% - Why is this dataset important/interesting?
-% - What analyses have others done with it? (cite 2–3 relevant papers/resources)
-% - What is  specific analysis objective?
+\input{sections/data.tex}
+\newpage
 
-\textit{[Describe the scientific/application context of  dataset. Explain the domain, why this dataset is important or interesting, what analyses others have performed with it (cite 2--3 relevant papers/resources), and state  specific analysis objective.]}
+\input{sections/architecture.tex}
+\newpage
 
+\input{sections/experiments.tex}
+\newpage
 
-% ============================================================
-% 2. Data Format & Characteristics (~300 words)
-% ============================================================
-\section{Data Format \& Characteristics}
-\label{sec:data}
-
-% Describe the dataset technically:
-% - What format is it stored in (CSV, JSON, Parquet, etc.)?
-% - What is its schema/structure?
-% - Total size and number of records?
-% - Any data quality issues encountered?
-% - Why was this format chosen (or why did you convert it)?
-
-\textit{[Describe the dataset technically: format (CSV, JSON, Parquet, etc.), schema/structure, total size and number of records, data quality issues encountered, and justification for format choice or conversion.]}
-
-% Example table for dataset characteristics:
-% \begin{table}[H]
-%     \centering
-%     \caption{Dataset characteristics.}
-%     \label{tab:dataset}
-%     \begin{tabular}{ll}
-%         \toprule
-%         \textbf{Property}   & \textbf{Value} \\
-%         \midrule
-%         Format              & CSV / JSON / Parquet \\
-%         Total Size          & XX GB \\
-%         Number of Records   & XX million \\
-%         Number of Columns   & XX \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-
-% ============================================================
-% 3. System Architecture & Implementation (~800 words)
-% ============================================================
-\section{System Architecture \& Implementation}
-\label{sec:architecture}
-
-% This is the MAIN section. Describe:
-% - System design diagram (mandatory figure)
-% - Choice of tools (Spark vs. Hadoop vs. hybrid – justify!)
-% - Infrastructure configuration (VM setup, cluster topology)
-% - Data pipeline stages (ingestion → processing → output)
-% - Code structure and key algorithms
-% - Challenges faced and how you solved them
-
-\textit{[This is the main section. Include a system design diagram, justify  choice of tools, describe the infrastructure configuration, explain the data pipeline stages, present code structure and key algorithms, and discuss challenges faced and solutions.]}
-
-% --- 3.1 System Design ---
-\subsection{System Design}
-\label{subsec:system-design}
-
-\textit{[Include a system architecture diagram (mandatory). Describe the high-level design of  distributed processing solution.]}
-
-% Example figure placeholder:
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.85\textwidth]{figures/architecture.png}
-%     \caption{System architecture diagram showing the data pipeline from ingestion to output.}
-%     \label{fig:architecture}
-% \end{figure}
-
-% --- 3.2 Technology Stack ---
-\subsection{Technology Stack}
-\label{subsec:tech-stack}
-
-\textit{[Justify  choice of tools: Spark vs. Hadoop vs. hybrid. Explain why the selected stack is suitable for  workload.]}
-
-% Example table for technology stack:
-% \begin{table}[H]
-%     \centering
-%     \caption{Technology stack used in this project.}
-%     \label{tab:tech-stack}
-%     \begin{tabular}{ll}
-%         \toprule
-%         \textbf{Component}   & \textbf{Technology} \\
-%         \midrule
-%         Storage              & HDFS \\
-%         Processing           & Apache Spark (PySpark) \\
-%         Orchestration        & Bash scripts \\
-%         Monitoring           & Spark History Server / htop \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-% --- 3.3 Infrastructure Configuration ---
-\subsection{Infrastructure Configuration}
-\label{subsec:infra}
-
-\textit{[Describe the VM setup and cluster topology. Specify the number of VMs, flavors (vCPU, RAM), storage allocation, and network configuration.]}
-
-% --- 3.4 Data Pipeline ---
-\subsection{Data Pipeline}
-\label{subsec:pipeline}
-
-\textit{[Describe the data pipeline stages: ingestion $\rightarrow$ processing $\rightarrow$ output. Explain the ETL workflow and key transformations applied.]}
-
-% --- 3.5 Code Structure ---
-\subsection{Code Structure}
-\label{subsec:code-structure}
-
-\textit{[Describe the repository layout and key modules (etl\_job.py, analysis\_job.py, config.py, etc.). Explain the role of each component.]}
-
-% --- 3.6 Challenges & Solutions ---
-\subsection{Challenges \& Solutions}
-\label{subsec:challenges}
-
-\textit{[Discuss the main engineering challenges encountered during the project and how you resolved them.]}
-
-
-% ============================================================
-% 4. Scalability Experiments & Results (~700 words)
-% ============================================================
-\section{Scalability Experiments \& Results}
-\label{sec:experiments}
-
-% Present  experimental findings:
-% - Experimental design (what did you vary?)
-% - Results with plots (runtime, speedup, efficiency)
-% - Analysis of results (did scaling work as expected? why/why not?)
-% - Bottleneck identification (what limits scalability?)
-% - Comparison to theoretical expectations
-
-\textit{[Present  experimental findings: experimental design, results with plots, analysis of results, bottleneck identification, and comparison to theoretical expectations.]}
-
-% --- 4.1 Experimental Design ---
-\subsection{Experimental Design}
-\label{subsec:exp-design}
-
-\textit{[Describe what you varied in  experiments (number of workers, cores, data size), the metrics measured (runtime, throughput), and the methodology used.]}
-
-% --- 4.2 Horizontal Scaling ---
-\subsection{Horizontal Scaling Results}
-\label{subsec:horizontal}
-
-% Strong Scaling: Fixed data, increasing nodes
-\textit{[Present results of horizontal (strong) scaling experiments: fixed dataset size with increasing number of worker nodes. Include runtime vs. number of workers plot.]}
-
-% Example figure placeholder:
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{figures/horizontal_scaling.png}
-%     \caption{Runtime vs. number of worker nodes (horizontal scaling).}
-%     \label{fig:horizontal-scaling}
-% \end{figure}
-
-% --- 4.3 Vertical Scaling ---
-\subsection{Vertical Scaling Results}
-\label{subsec:vertical}
-
-\textit{[Present results of vertical scaling experiments: fixed number of nodes with increasing cores/memory per node. Include runtime vs. resources plot.]}
-
-% Example figure placeholder:
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{figures/vertical_scaling.png}
-%     \caption{Runtime vs. executor cores (vertical scaling).}
-%     \label{fig:vertical-scaling}
-% \end{figure}
-
-% --- 4.4 Speedup Analysis ---
-\subsection{Speedup \& Efficiency Analysis}
-\label{subsec:speedup}
-
-\textit{[Compute and plot the speedup factor ($S = T_1 / T_N$) and efficiency ($E = S / N$). Compare against ideal linear speedup. Discuss deviations.]}
-
-% Example figure placeholder:
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{figures/speedup.png}
-%     \caption{Speedup factor vs. ideal linear speedup.}
-%     \label{fig:speedup}
-% \end{figure}
-
-% --- 4.5 Bottleneck Identification ---
-\subsection{Bottleneck Identification}
-\label{subsec:bottlenecks}
-
-\textit{[Identify what limits scalability: CPU, network I/O, disk I/O, shuffle overhead, data skew, or serialization. Reference Amdahl's Law if applicable.]}
-
-
-% ============================================================
-% 5. Discussion & Conclusion (~300 words)
-% ============================================================
-\section{Discussion \& Conclusion}
-\label{sec:discussion}
-
-% Reflect on the project:
-% - Was  architecture suitable for the problem?
-% - What worked well?
-% - What would you improve with more time/resources?
-% - What did you learn about distributed systems?
-
-\textit{[Reflect on the project: Was the architecture suitable? What worked well? What would you improve with more time/resources? What did you learn about distributed systems?]}
+\input{sections/discussion.tex}
+\newpage
 
 
 % ============================================================
