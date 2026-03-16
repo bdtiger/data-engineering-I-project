@@ -52,7 +52,7 @@ run_experiment() {
 run_experiment "H-1" 1 2 5
 run_experiment "H-2" 2 2 5
 run_experiment "H-3" 3 2 5
-
+run_experiment "V-1" 3 1 5
 
 echo "All experiments completed. Runtimes recorded in $RESULTS_FILE"
 cat $RESULTS_FILE
