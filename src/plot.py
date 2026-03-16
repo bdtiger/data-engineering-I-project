@@ -31,9 +31,8 @@ def plot_horizontal_scaling(results):
     axes[1].grid(True)
 
     plt.tight_layout()
-    plt.savefig("results/horizontal_scaling.png", dpi=150)
+    plt.savefig("project-report/figures/horizontal_scaling.png", dpi=150)
     plt.show()
-    print("Saved: results/horizontal_scaling.png")
 
 def plot_vertical_scaling(results):
     # ── Vertical Scaling ──────────────────────────────────────────────────────────
@@ -65,9 +64,8 @@ def plot_vertical_scaling(results):
     axes[1].grid(True)
 
     plt.tight_layout()
-    plt.savefig("results/vertical_scaling.png", dpi=150)
+    plt.savefig("project-report/figures/vertical_scaling.png", dpi=150)
     plt.show()
-    print("Saved: results/vertical_scaling.png")
 
 if __name__ == "__main__":
     # ── Load timings.csv ─────────────────────────────────────────────────────────
