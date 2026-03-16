@@ -54,14 +54,20 @@ run_experiment() {
 # 4. W-1, 1 worker, 2 cores, 5 GB (Same as H-1)
 # 5. W-2, 2 workers, 2 cores, 10 GB
 # 6. V-1, 3 workers, 1 core, 5 GB
-# 7. V-2, 3 workers, 2 cores, 5 GB
+# 7. V-2, 3 workers, 2 cores, 5 GB (Same as H-3)
 # 8. V-3, 3 workers, 1 cores, 10 GB
 # 8. V-4, 3 workers, 2 cores, 10 GB
-run_experiment "H-1" 1 2 5
-run_experiment "H-2" 2 2 5
-run_experiment "H-3" 3 2 5
-run_experiment "V-1" 3 1 5
-run_experiment "V-2" 3 2 5
+
+#run_experiment "H-1" 1 2 5
+#run_experiment "H-2" 2 2 5
+#run_experiment "H-3" 3 2 5
+#run_experiment "W-1" 1 2 5
+run_experiment "W-2" 2 2 10
+#run_experiment "V-1" 3 1 5
+#run_experiment "V-2" 3 2 5
+run_experiment "V-3" 3 1 10
+run_experiment "V-4" 3 2 10
 
 echo "All experiments completed. Runtimes recorded in $RESULTS_FILE"
 cat $RESULTS_FILE
+
