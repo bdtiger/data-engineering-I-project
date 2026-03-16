@@ -1,0 +1,4 @@
+experiment,workers,cores_per_executor,data_gb,runtime_seconds
+W-2,2,2,10,95
+V-3,3,1,10,91
+V-4,3,2,10,76
