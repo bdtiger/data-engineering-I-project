@@ -39,7 +39,7 @@ ENV/
 .DS_Store
 
 # Data files
-*.csv
+
 *.xlsx
 *.xls
 *.json
