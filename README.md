@@ -51,6 +51,7 @@ project-repo/
 │   └── analysis_job.py        # Main Spark aggregation logic
 ├── scripts/
 │   ├── deploy.sh              # Deploy code to cluster Master node
+│   ├── ingest_nyc_taxi.sh     # Automated data pipeline (Download, clean, & upload to HDFS)
 │   └── run_benchmark.sh       # Run all scaling experiments (H-1/2/3, W-1/2/3, V-1/2)
 ├── notebooks/                 # Jupyter notebooks for data exploration
 └── project-report/
@@ -73,14 +74,14 @@ project-repo/
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    OpenStack SSC Cluster                 │
+│                    OpenStack SSC Cluster                │
 │                                                         │
-│  ┌──────────────┐   ┌───────────┐   ┌───────────┐      │
-│  │   Master     │   │  Worker 1 │   │  Worker 2 │      │
-│  │  (NameNode)  │──▶│ (DataNode)│   │ (DataNode)│      │
-│  │  (Spark      │   │ (Spark    │   │ (Spark    │      │
-│  │   Driver)    │   │  Executor)│   │  Executor)│      │
-│  │              │   └───────────┘   └───────────┘      │
+│  ┌──────────────┐   ┌───────────┐   ┌───────────┐       │
+│  │   Master     │   │  Worker 1 │   │  Worker 2 │       │
+│  │  (NameNode)  │──▶│ (DataNode)│   │ (DataNode)│       │
+│  │  (Spark      │   │ (Spark    │   │ (Spark    │       │
+│  │   Driver)    │   │  Executor)│   │  Executor)│       │
+│  │              │   └───────────┘   └───────────┘       │
 │  │  Floating IP │                                       │
 │  └──────────────┘   ┌───────────┐                       │
 │                     │  Worker 3 │                       │
@@ -146,22 +147,13 @@ bash scripts/deploy.sh <master-ip>
 
 ---
 
-## Data Download
+## Data Ingestion
 
-On the **Master node**, download NYC Taxi Parquet files from the TLC website:
+Instead of manually downloading files, use the ingestion pipeline script to automatically download, validate, and upload the NYC Taxi Parquet files to HDFS.
 
+Run the pipeline from the Master node (specify the year you want to ingest):
 ```bash
-# Example: download Yellow Taxi trip records for several months
-wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-01.parquet
-wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-02.parquet
-# ... repeat for enough months to reach ~10–20 GB
-
-# Upload to HDFS
-hdfs dfs -mkdir -p /data/nyc-taxi
-hdfs dfs -put yellow_tripdata_*.parquet /data/nyc-taxi/
-
-# Verify
-hdfs dfs -ls /data/nyc-taxi/
+bash scripts/ingest_nyc_taxi.sh 2023
 ```
 
 ---
