@@ -13,7 +13,7 @@
 |------|------|
 | Abdur Rehman Khalid | Data Engineer |
 | Arnab Kumar Ghosh | Infrastructure Engineer and Core Logic Developer |
-| Dip Chowdhury | TBA |
+| Dip Chowdhury | Test & QA Engineer |
 | Muhammad Umair | TBA |
 | Pradip Kumar Das | TBA |
 | Zihao Yang | TBA |
