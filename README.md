@@ -156,6 +156,14 @@ Run the pipeline from the Master node (specify the year you want to ingest):
 bash scripts/ingest_nyc_taxi.sh 2023
 ```
 
+This script automatically handles:
+
+* Staging the downloads locally.
+* Validating file sizes to remove corrupted records.
+* Creating the necessary HDFS directories (`/data/nyc-taxi/raw/`).
+* Uploading the validated Parquet files to HDFS.
+* Cleaning up the local staging area.
+
 ---
 
 ## Running the Pipeline
