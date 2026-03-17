@@ -27,7 +27,7 @@ This project demonstrates a scalable data processing pipeline using Apache Spark
 **Dataset:** NYC Taxi Trips
 **Source:** https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 **Format:** Parquet (columnar, no format conversion required)
-**Target size:** 10–20 GB (several months of trip records)
+**Target size:** 5-10 GB (several years of trip records)
 
 **Analysis Objective:**
 Filter invalid records and compute the **average trip duration and average fare amount grouped by pickup zone and hour of day**, writing results to HDFS as Parquet/CSV.
@@ -202,15 +202,15 @@ bash scripts/run_benchmark.sh
 
 | ID | Type | Config | Data |
 |----|------|--------|------|
-| H-1 | Strong (Horizontal) | 1 Worker | ~10 GB |
-| H-2 | Strong (Horizontal) | 2 Workers | ~10 GB |
-| H-3 | Strong (Horizontal) | 3 Workers | ~10 GB |
-| W-1 | Weak (Horizontal) | 1 Worker | ~5 GB |
-| W-2 | Weak (Horizontal) | 2 Workers | ~10 GB |
-| W-3 | Weak (Horizontal) | 3 Workers | ~15 GB |
-| V-1 | Vertical | 3 Workers, 1 core/executor | ~10 GB |
-| V-2 | Vertical | 3 Workers, 2 cores/executor | ~10 GB |
-
+| H-1 | Strong (Horizontal) | 1 Worker | 5 GB |
+| H-2 | Strong (Horizontal) | 2 Workers | 5 GB |
+| H-3 | Strong (Horizontal) | 3 Workers | 5 GB |
+| W-1 | Weak (Horizontal) | 1 Worker | 5 GB |
+| W-2 | Weak (Horizontal) | 2 Workers | 10 GB |
+| V-1 | Vertical | 3 Workers, 1 core/executor | 5 GB |
+| V-2 | Vertical | 3 Workers, 2 cores/executor | 5 GB |
+| V-3 | Vertical | 3 Workers, 1 core/executor | 10 GB |
+| V-4 | Vertical | 3 Workers, 2 cores/executor | 10 GB |
 Results (runtimes, speedup, efficiency) are collected in `data/results/`.
 
 ---
