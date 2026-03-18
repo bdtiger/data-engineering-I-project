@@ -4,10 +4,16 @@
 \section{Background}
 \label{sec:background}
 
-% Describe the scientific/application context of  dataset:
-% - What domain does it come from?
-% - Why is this dataset important/interesting?
-% - What analyses have others done with it? (cite 2–3 relevant papers/resources)
-% - What is  specific analysis objective?
+Urban transportation systems generate vast volumes of data that can be leveraged to improve traffic management, infrastructure planning, and mobility services. One of the most widely used real-world datasets in this domain is the New York City Taxi Trip dataset, published by the New York City Taxi and Limousine Commission (TLC) \cite{TLC2024}. This dataset contains detailed records of taxi trips, including pickup and drop-off timestamps, geographic zones, trip distances, and fare amounts, making it a valuable resource for studying large-scale urban mobility patterns.\\
 
-\textit{[Describe the scientific/application context of  dataset. Explain the domain, why this dataset is important or interesting, what analyses others have performed with it (cite 2--3 relevant papers/resources), and state  specific analysis objective.]}
+The NYC taxi dataset is particularly relevant for data engineering research due to its scale and complexity. In this project, a subset of approximately 10--20 GB of data stored in Apache Parquet format is used. Columnar storage formats such as Parquet are designed for efficient analytical workloads by enabling better compression and reducing I/O during query execution, which is critical for large-scale data processing systems. The dataset contains millions of trip records, making it suitable for evaluating distributed systems under realistic conditions. Such large-scale data processing challenges are commonly addressed using parallel computing paradigms like MapReduce \cite{Dean2008}, which form the foundation of modern distributed frameworks.\\
+
+Prior research has demonstrated the usefulness of taxi trip data in applications such as demand prediction, traffic flow analysis, and anomaly detection. For instance, studies in urban computing have used mobility datasets to identify spatial and temporal demand patterns, enabling improved resource allocation in cities \cite{Andrienko2013}. Other works have explored predictive modeling techniques to estimate trip duration and detect irregular travel behavior. These examples highlight that beyond analytical insights, such datasets are also valuable benchmarks for evaluating the performance of large-scale data processing systems.\\
+
+In this project, the analytical objective is intentionally simple: to compute the average trip duration and average fare amount grouped by pickup zone and hour of the day. This type of aggregation represents a common workload in data engineering pipelines and involves filtering, grouping, and aggregation operations over large datasets. Keeping the analytical task simple ensures that the focus remains on system performance and scalability rather than algorithmic complexity, which aligns with the project’s emphasis on engineering aspects.\\
+
+To efficiently process the dataset, the project utilizes Apache Spark, a distributed data processing engine designed for large-scale analytics \cite{Zaharia2016}, in combination with Hadoop Distributed File System (HDFS) for scalable and fault-tolerant storage. These technologies enable parallel execution across multiple nodes, allowing the workload to be distributed and processed efficiently. The system is deployed on a constrained cluster environment consisting of virtual machines, reflecting realistic limitations in computational resources and reinforcing the importance of efficient system design.\\
+
+A central focus of this project is the evaluation of system scalability through both horizontal and vertical scaling experiments. By varying the number of worker nodes and computational resources, the project analyzes performance improvements and identifies bottlenecks such as network overhead, data shuffling, and resource contention. The observed results are interpreted using theoretical models such as Amdahl's Law \cite{Amdahl1967}, which provides a foundation for understanding the limits of parallel speedup. This approach ensures that the project not only demonstrates practical system implementation but also critically evaluates the behavior of distributed systems under realistic big data workloads.
+
+
