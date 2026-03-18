@@ -4,28 +4,39 @@
 \section{Data Format \& Characteristics}
 \label{sec:data}
 
-% Describe the dataset technically:
-% - What format is it stored in (CSV, JSON, Parquet, etc.)?
-% - What is its schema/structure?
-% - Total size and number of records?
-% - Any data quality issues encountered?
-% - Why was this format chosen (or why did you convert it)?
+\subsection{Storage Format and Justification}
+The dataset utilized in this project consists of New York City Taxi Trip records stored natively in the Apache Parquet format. Parquet, a columnar storage format, was deliberately chosen over row-based alternatives such as CSV because it enables significant data compression and minimizes I/O overhead during analytical query execution. This efficiency is critical for large-scale data processing and essential for operating within the strict 100~GB total storage quota imposed on the OpenStack cluster.
 
-\textit{[Describe the dataset technically: format (CSV, JSON, Parquet, etc.), schema/structure, total size and number of records, data quality issues encountered, and justification for format choice or conversion.]}
+\subsection{Dataset Scale and Volume}
+In total, the raw dataset comprises 144 individual Parquet files spanning from early 2014 to late 2025. After rigorous cleaning and standardization, the final operational dataset yields exactly 219,107,040 valid trip records. For the scope of this project, a subset of approximately 10--20~GB of data is processed. These characteristics are summarized in Table~\ref{tab:dataset}.
 
-% Example table for dataset characteristics:
-% \begin{table}[H]
-%     \centering
-%     \caption{Dataset characteristics.}
-%     \label{tab:dataset}
-%     \begin{tabular}{ll}
-%         \toprule
-%         \textbf{Property}   & \textbf{Value} \\
-%         \midrule
-%         Format              & CSV / JSON / Parquet \\
-%         Total Size          & XX GB \\
-%         Number of Records   & XX million \\
-%         Number of Columns   & XX \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
+\begin{table}[H]
+    \centering
+    \caption{Dataset characteristics.}
+    \label{tab:dataset}
+    \begin{tabular}{ll}
+        \hline
+        \textbf{Property}    & \textbf{Value} \\
+        \hline
+        Format              & Apache Parquet \\
+        Total Subset Size   & 10--20 GB \\
+        Number of Records   & 219,107,040 \\
+        Initial Columns     & 20 \\
+        Processed Columns   & 4 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Schema Structure and Resource Constraints}
+While the raw TLC schema contains up to 20 diverse attributes, our ETL pipeline aggressively prunes the structure to four essential columns to conserve memory and bypass the 25~GB per-VM storage limitation. The final refined schema is narrowed down to:
+\begin{itemize}
+    \item \texttt{pickup\_datetime}: The date and time when the meter was engaged.
+    \item \texttt{PULocationID}: TLC Taxi Zone in which the taximeter was engaged.
+    \item \texttt{fare\_amount}: The time-and-distance fare calculated by the meter.
+    \item \texttt{pickup\_hour}: A derived attribute representing the hour of the day for aggregation.
+\end{itemize}
+
+\subsection{Data Quality Challenges and Remediation}
+Several prominent data quality issues were encountered during the ingestion phase. Most notably, schema volatility across different months caused PySpark's vectorized reader to crash with a schema merge exception. This anomaly was driven by the \texttt{Airport\_fee} column dynamically shifting its data type between \texttt{INT32} and \texttt{FLOAT64} depending on the month. 
+
+To circumvent this, the pipeline was re-engineered to read files individually, bypassing global schema inference, and explicitly casting core columns to strict unified types. Furthermore, the raw data contained logically invalid operational records; consequently, strict filtering was applied to systematically eliminate trips with zero or negative fare amounts, missing location IDs, and zero-passenger counts prior to aggregation.
