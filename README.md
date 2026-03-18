@@ -23,10 +23,10 @@
 
 This project demonstrates a scalable data processing pipeline using Apache Spark on a Hadoop/HDFS cluster deployed on OpenStack SSC. We process the **NYC Taxi Trips** dataset and conduct systematic scalability experiments (horizontal strong/weak scaling and vertical scaling) to evaluate performance and identify bottlenecks.
 
-**Dataset:** NYC Taxi Trips
-**Source:** https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
-**Format:** Parquet (columnar, no format conversion required)
-**Target size:** 5-10 GB (several years of trip records)
+**Dataset:** NYC Taxi Trips.  
+**Source:** https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page.  
+**Format:** Parquet (columnar, no format conversion required).  
+**Target size:** 5-10 GB (several years of trip records).  
 
 **Analysis Objective:**
 Filter invalid records and compute the **average trip duration and average fare amount grouped by pickup zone and hour of day**, writing results to HDFS as Parquet/CSV.
@@ -53,6 +53,7 @@ project-repo/
 │   ├── ingest_nyc_taxi.sh     # Automated data pipeline (Download, clean, & upload to HDFS)
 │   └── run_benchmark.sh       # Run all scaling experiments (H-1/2/3, W-1/2/3, V-1/2)
 ├── notebooks/                 # Jupyter notebooks for data exploration
+│   └── final_notebook.ipynb   # PySpark data cleaning and aggregation pipeline for NYC taxi data
 └── project-report/
     ├── report.tex             # LaTeX report source
     └── references.bib         # BibTeX references
