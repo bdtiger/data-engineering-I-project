@@ -16,7 +16,6 @@
 | Dip Chowdhury | Test & QA Engineer |
 | Muhammad Umair | TBA |
 | Pradip Kumar Das | TBA |
-| Zihao Yang | TBA |
 
 ---
 
