@@ -31,7 +31,7 @@ def plot_horizontal_scaling(results):
     axes[1].grid(True)
 
     plt.tight_layout()
-    plt.savefig("project-report/figures/horizontal_scaling.png", dpi=150)
+    plt.savefig("horizontal_scaling.png", dpi=150)
     plt.show()
 
 def plot_vertical_scaling(results):
@@ -64,7 +64,7 @@ def plot_vertical_scaling(results):
     axes[1].grid(True)
 
     plt.tight_layout()
-    plt.savefig("project-report/figures/vertical_scaling.png", dpi=150)
+    plt.savefig("vertical_scaling.png", dpi=150)
     plt.show()
 
 def plot_vertical_scaling_10gb(results):
@@ -97,7 +97,7 @@ def plot_vertical_scaling_10gb(results):
     axes[1].grid(True)
 
     plt.tight_layout()
-    plt.savefig("project-report/figures/vertical_scaling_10gb.png", dpi=150)
+    plt.savefig("vertical_scaling_10gb.png", dpi=150)
     plt.show()
 
 
@@ -130,19 +130,33 @@ def plot_weak_scaling(results):
     axes[1].grid(True)
 
     plt.tight_layout()
-    plt.savefig("project-report/figures/weak_scaling.png", dpi=150)
+    plt.savefig("weak_scaling.png", dpi=150)
     plt.show()
 
 if __name__ == "__main__":
-    # ── Load timings.csv ─────────────────────────────────────────────────────────
+    # load data from csv files
     results_data = {}
-    with open("results/timings.csv") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            results_data[row["experiment"]] = int(row["runtime_seconds"])
-        if "W-1" not in results_data and "H-1" in results_data:
+
+    files = [
+        "timings_exp1.csv",
+        "timings_exp2_run1.csv"
+    ]
+
+    for file_name in files:
+        with open(file_name) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                exp = row["experiment"]
+                runtime = int(row["runtime_seconds"])
+
+                if exp not in results_data:
+                    results_data[exp] = runtime
+
+    # reuse matching experiment
+    if "W-1" not in results_data and "H-1" in results_data:
         results_data["W-1"] = results_data["H-1"]
 
+    # run plots
     plot_horizontal_scaling(results_data)
     plot_vertical_scaling(results_data)
     plot_vertical_scaling_10gb(results_data)
