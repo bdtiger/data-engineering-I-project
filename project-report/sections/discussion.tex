@@ -1,13 +1,14 @@
 % ============================================================
 % 5. Discussion & Conclusion (~300 words)
 % ============================================================
+
 \section{Discussion \& Conclusion}
-\label{sec:discussion}
+\label{sec:discussion-conclusion}
 
-% Reflect on the project:
-% - Was  architecture suitable for the problem?
-% - What worked well?
-% - What would you improve with more time/resources?
-% - What did you learn about distributed systems?
+The chosen architecture, centering on a master-worker topology with HDFS and Apache Spark, proved highly suitable for the batch processing requirements of the NYC Taxi dataset. The combination of Parquet's columnar storage and Spark’s in-memory computation successfully addressed the challenge of processing millions of records within the strict resource constraints of our OpenStack environment.\\
 
-\textit{[Reflect on the project: Was the architecture suitable? What worked well? What would you improve with more time/resources? What did you learn about distributed systems?]}
+One of the most successful aspects of the implementation was our schema enforcement strategy. By bypassing global schema inference and implementing explicit type-casting for the volatile \texttt{Airport\_fee} column, we stabilized an otherwise fragile ingestion pipeline. Furthermore, our aggressive column pruning allowed us to maximize the utility of the 4~GB RAM per node, enabling the processing of 10~GB workloads that would have otherwise triggered memory exhaustion.\\
+
+However, with additional time and resources, we would improve the system's I/O throughput. Our scalability experiments revealed a clear performance floor at approximately 80 seconds, suggesting that the virtualized disk I/O and network bandwidth became the primary bottlenecks. Moving from a shared storage model to local NVMe-based HDFS storage or implementing a more robust cluster manager like YARN could potentially lower this floor. Additionally, exploring Kryo serialization or broadcast joins for the taxi zone lookup could further optimize the shuffle phase.\\
+
+The most significant takeaway from this project is the non-linear nature of distributed systems. We learned that adding more resources does not always translate to faster performance; rather, as evidenced by our 58\% efficiency at three nodes, the coordination tax and sequential bottlenecks (Amdahl’s Law) can quickly diminish the benefits of horizontal scaling. This project underscored that effective data engineering is not just about writing code, but about managing the delicate balance between data volume, hardware constraints, and framework overhead.

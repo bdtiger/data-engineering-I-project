@@ -1,14 +1,11 @@
-% ============================================================
-% 2. Data Format & Characteristics (~300 words)
-% ============================================================
 \section{Data Format \& Characteristics}
 \label{sec:data}
 
 \subsection{Storage Format and Justification}
-The dataset utilized in this project consists of New York City Taxi Trip records stored natively in the Apache Parquet format. Parquet, a columnar storage format, was deliberately chosen over row-based alternatives such as CSV because it enables significant data compression and minimizes I/O overhead during analytical query execution. This efficiency is critical for large-scale data processing and essential for operating within the strict 100~GB total storage quota imposed on the OpenStack cluster.
+The dataset consists of New York City Taxi Trip records stored in Apache Parquet. This columnar format was chosen over row-based alternatives like CSV to enable high compression and minimize I/O overhead. Such efficiency is critical for large-scale processing within the 100~GB storage quota of the OpenStack cluster.
 
 \subsection{Dataset Scale and Volume}
-In total, the raw dataset comprises 144 individual Parquet files spanning from early 2014 to late 2025. After rigorous cleaning and standardization, the final operational dataset yields exactly 219,107,040 valid trip records. For the scope of this project, a subset of approximately 10--20~GB of data is processed. These characteristics are summarized in Table~\ref{tab:dataset}.
+The raw dataset comprises 144 Parquet files (2014--2025). After cleaning, the operational dataset yields 219,107,040 valid records. For this project's scope, a 10--20~GB subset is processed, as summarized in Table~\ref{tab:dataset}.
 
 \begin{table}[H]
     \centering
@@ -28,15 +25,13 @@ In total, the raw dataset comprises 144 individual Parquet files spanning from e
 \end{table}
 
 \subsection{Schema Structure and Resource Constraints}
-While the raw TLC schema contains up to 20 diverse attributes, our ETL pipeline aggressively prunes the structure to four essential columns to conserve memory and bypass the 25~GB per-VM storage limitation. The final refined schema is narrowed down to:
+To bypass the 25~GB per-VM storage limit and conserve memory, the ETL pipeline prunes the raw TLC schema from 20 attributes to four essential columns:
 \begin{itemize}
-    \item \texttt{pickup\_datetime}: The date and time when the meter was engaged.
-    \item \texttt{PULocationID}: TLC Taxi Zone in which the taximeter was engaged.
-    \item \texttt{fare\_amount}: The time-and-distance fare calculated by the meter.
-    \item \texttt{pickup\_hour}: A derived attribute representing the hour of the day for aggregation.
+    \item \texttt{pickup\_datetime}: Engagement timestamp.
+    \item \texttt{PULocationID}: TLC Taxi Zone ID.
+    \item \texttt{fare\_amount}: Calculated trip fare.
+    \item \texttt{pickup\_hour}: A derived attribute for hourly aggregation.
 \end{itemize}
 
 \subsection{Data Quality Challenges and Remediation}
-Several prominent data quality issues were encountered during the ingestion phase. Most notably, schema volatility across different months caused PySpark's vectorized reader to crash with a schema merge exception. This anomaly was driven by the \texttt{Airport\_fee} column dynamically shifting its data type between \texttt{INT32} and \texttt{FLOAT64} depending on the month. 
-
-To circumvent this, the pipeline was re-engineered to read files individually, bypassing global schema inference, and explicitly casting core columns to strict unified types. Furthermore, the raw data contained logically invalid operational records; consequently, strict filtering was applied to systematically eliminate trips with zero or negative fare amounts, missing location IDs, and zero-passenger counts prior to aggregation.
+Significant schema volatility was encountered during ingestion. Specifically, the \texttt{Airport\_fee} column shifted data types between \texttt{INT32} and \texttt{FLOAT64} across months, causing PySpark schema merge exceptions. To resolve this, the pipeline was re-engineered to read files individually and apply explicit type casting. Additionally, strict filtering was implemented to eliminate logically invalid records, such as trips with zero or negative fares, missing location IDs, or zero passengers, ensuring data integrity prior to aggregation.
