@@ -29,7 +29,7 @@ Using a fixed 5~GB workload and 2 cores per worker, we observed a clear trend of
     \label{fig:horizontal_scaling}
 \end{figure}
 
-\textbf{Analysis:} The results indicate that while the jump from one to two workers yielded ~ 37\% improvement in speed, the transition to a third worker provided only ~9\% gain. This non-linear behavior suggests that for a relatively small 5~GB dataset, the administrative overhead of the Spark driver—specifically task distribution and managing RDD partitions—begins to consume a larger percentage of the total runtime than the actual computation.
+\textbf{Analysis:} The results indicate that while the jump from one to two workers yielded $\mathtt{\sim}$37\% improvement in speed, the transition to a third worker provided only $\mathtt{\sim}$9\% gain. This non-linear behavior suggests that for a relatively small 5~GB dataset, the administrative overhead of the Spark driver, specifically task distribution and managing RDD partitions, begins to consume a larger percentage of the total runtime than the actual computation.
 
 \subsection{Vertical Scaling}
 We compared 1 vs. 2 cores on a fixed 3-worker cluster to determine the impact of compute density on different data scales:
@@ -73,7 +73,7 @@ Ideal weak scaling assumes a constant runtime when resources grow at the same ra
     \label{fig:weak_scaling}
 \end{figure}
 
-\textbf{Analysis:} Weak scaling failed to maintain constant time, showing ~21\% increase in runtime. This degradation highlights the significant ``coordination tax'' required to manage larger datasets across multiple nodes, primarily due to increased network latency during Spark's shuffle phase and non-linear I/O performance in the virtualized HDFS environment.
+\textbf{Analysis:} Weak scaling failed to maintain constant time, showing $\mathtt{\sim}$21\% increase in runtime. This degradation highlights the significant ``coordination tax'' required to manage larger datasets across multiple nodes, primarily due to increased network latency during Spark's shuffle phase and non-linear I/O performance in the virtualized HDFS environment.
 
 \subsection{Bottleneck Identification}
 A critical observation is the ``Performance Floor'' at the $\sim$80-second mark. Trials H-3 (81s), V-2 (80s), and V-4 (80s) all converged here, regardless of data size or CPU cores. Some of the possible causes are:
