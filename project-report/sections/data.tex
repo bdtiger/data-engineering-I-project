@@ -5,7 +5,7 @@
 The dataset consists of New York City Taxi Trip records stored in Apache Parquet. This columnar format was chosen over row-based alternatives like CSV to enable high compression and minimize I/O overhead. Such efficiency is critical for large-scale processing within the 100~GB storage quota of the OpenStack cluster.
 
 \subsection{Dataset Scale and Volume}
-The raw dataset comprises 144 Parquet files (2014--2025). After cleaning, the operational dataset yields 219,107,040 valid records. For this project's scope, a 10--20~GB subset is processed, as summarized in Table~\ref{tab:dataset}.
+The raw dataset comprises 144 Parquet files (2014--2025). After cleaning, the operational dataset yields 219,107,040 valid records. For this project's scope, a 10.3 GB subset is processed, as summarized in Table~\ref{tab:dataset}. However, in the report we mentioned 10~GB, which is a rounded figure for simplicity.
 
 \begin{table}[H]
     \centering
@@ -16,7 +16,7 @@ The raw dataset comprises 144 Parquet files (2014--2025). After cleaning, the op
         \textbf{Property}    & \textbf{Value} \\
         \hline
         Format              & Apache Parquet \\
-        Total Subset Size   & 10--20 GB \\
+        Total Subset Size   & 10 GB \\
         Number of Records   & 219,107,040 \\
         Initial Columns     & 20 \\
         Processed Columns   & 4 \\
