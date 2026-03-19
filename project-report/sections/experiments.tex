@@ -8,7 +8,7 @@ The objective of our experiments was to evaluate the performance characteristics
 \begin{itemize}
     \item \textbf{Horizontal (Strong) Scaling:} This measures the system's ability to reduce total execution time as additional worker nodes are added (Trials H-1, H-2, and H-3) while maintaining a fixed 5~GB workload. 
     \item \textbf{Vertical Scaling:} This evaluates the impact of increasing CPU cores per worker (1 vs. 2 cores) while keeping the cluster size fixed at three nodes. This was tested for both 5~GB (V-1, V-2) and 10~GB (V-3, V-4) datasets to identify if the job is compute-bound.
-    \item \textbf{Weak Scaling:} This measures how the system handles proportional growth in both workload and resources (H-1 vs. W-2). Ideally, if the data per worker remains constant (5~GB/node), the runtime should remain flat.
+    \item \textbf{Weak Scaling:} This measures how the system handles proportional growth in both workload and resources (W-1 vs. W-2). Ideally, if the data per worker remains constant (5~GB/node), the runtime should remain flat.
 \end{itemize}
 
 The primary metrics for evaluation are total runtime in seconds, Speedup ($S = T_1/T_N$), and Efficiency ($E = S/N$).
@@ -29,7 +29,7 @@ Using a fixed 5~GB workload and 2 cores per worker, we observed a clear trend of
     \label{fig:horizontal_scaling}
 \end{figure}
 
-\textbf{Analysis:} The results indicate that while the jump from one to two workers yielded a 37\% improvement in speed, the transition to a third worker provided only a 9\% gain. This non-linear behavior suggests that for a relatively small 5~GB dataset, the administrative overhead of the Spark driver—specifically task distribution and managing RDD partitions—begins to consume a larger percentage of the total runtime than the actual computation.
+\textbf{Analysis:} The results indicate that while the jump from one to two workers yielded ~ 37\% improvement in speed, the transition to a third worker provided only ~9\% gain. This non-linear behavior suggests that for a relatively small 5~GB dataset, the administrative overhead of the Spark driver—specifically task distribution and managing RDD partitions—begins to consume a larger percentage of the total runtime than the actual computation.
 
 \subsection{Vertical Scaling}
 We compared 1 vs. 2 cores on a fixed 3-worker cluster to determine the impact of compute density on different data scales:
@@ -62,7 +62,7 @@ We compared 1 vs. 2 cores on a fixed 3-worker cluster to determine the impact of
 Ideal weak scaling assumes a constant runtime when resources grow at the same rate as the data. We compared H-1 (1 worker/5~GB) to W-2 (2 workers/10~GB):
 
 \begin{itemize}
-    \item \textbf{1 Worker / 5~GB (Trial H-1):} 142 seconds.
+    \item \textbf{1 Worker / 5~GB (Trial W-1):} 142 seconds.
     \item \textbf{2 Workers / 10~GB (Trial W-2):} 173 seconds.
 \end{itemize}
 
@@ -73,16 +73,16 @@ Ideal weak scaling assumes a constant runtime when resources grow at the same ra
     \label{fig:weak_scaling}
 \end{figure}
 
-\textbf{Analysis:} Weak scaling failed to maintain constant time, showing a 21\% increase in runtime. This degradation highlights the significant ``coordination tax'' required to manage larger datasets across multiple nodes, primarily due to increased network latency during Spark's shuffle phase and non-linear I/O performance in the virtualized HDFS environment.
+\textbf{Analysis:} Weak scaling failed to maintain constant time, showing ~21\% increase in runtime. This degradation highlights the significant ``coordination tax'' required to manage larger datasets across multiple nodes, primarily due to increased network latency during Spark's shuffle phase and non-linear I/O performance in the virtualized HDFS environment.
 
 \subsection{Bottleneck Identification}
-A critical observation is the ``Performance Floor'' at the $\sim$80-second mark. Trials H-3 (81s), V-2 (80s), and V-4 (80s) all converged here, regardless of data size or CPU cores.
+A critical observation is the ``Performance Floor'' at the $\sim$80-second mark. Trials H-3 (81s), V-2 (80s), and V-4 (80s) all converged here, regardless of data size or CPU cores. Some of the possible causes are:
 
 \begin{enumerate}
     \item \textbf{Scheduling Overhead:} At 80s, the time required to partition data and schedule tasks dominates the execution time.
     \item \textbf{Shuffle I/O:} Network bandwidth saturation during the reduce/group-by phase limits gains from faster CPUs.
     \item \textbf{Storage Limits:} Shared HDFS throughput likely hit a ceiling, capping the read speeds for both 5~GB and 10~GB datasets.
-    \item \textbf{Memory Pressure:} For 10~GB loads, the 4~GB RAM limit per node increases garbage collection (GC) frequency during data shuffling, further impeding scalability.
+    \item \textbf{Memory Pressure:} For 10~GB loads, the RAM limit per node increases garbage collection (GC) frequency during data shuffling, further impeding scalability.
 \end{enumerate}
 
 \subsection{Speedup \& Efficiency Analysis}
@@ -93,4 +93,4 @@ Comparing our findings to theoretical linear scaling reveals a significant effic
     \item \textbf{3-Worker Case ($N=3$):} Speedup $S \approx 1.75$ (Ideal: 3.0); Efficiency $E \approx 58\%$.
 \end{itemize}
 
-The efficiency plummet at three workers confirms that the 5~GB dataset is too small to offset the overhead of the third node. According to Amdahl’s Law, the sequential portions of the code—such as the final \texttt{coalesce(1)} operation and the driver-side result collection—create a fixed cost that prevents the system from achieving linear speedup regardless of additional worker allocation.
+The efficiency plummet at three workers confirms that the 5~GB dataset is too small to offset the overhead of the third node. According to Amdahl’s Law, the sequential portions of the code and the driver-side result collection create a fixed cost that prevents the system from achieving linear speedup regardless of additional worker allocation.
