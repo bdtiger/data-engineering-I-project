@@ -15,7 +15,7 @@
 | Arnab Kumar Ghosh | Infrastructure Engineer and Core Logic Developer |
 | Dip Chowdhury | Test & QA Engineer |
 | Muhammad Umair | TBA |
-| Pradip Kumar Das | TBA |
+| Pradip Kumar Das | Analyst & Reporter |
 
 ---
 
