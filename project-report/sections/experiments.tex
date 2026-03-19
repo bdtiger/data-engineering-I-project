@@ -59,7 +59,7 @@ We compared 1 vs. 2 cores on a fixed 3-worker cluster to determine the impact of
 \textbf{Analysis:} The effectiveness of vertical scaling is strictly dependent on the data volume. At 5~GB, the workers are not CPU-bound; hence, additional cores do not help. However, at 10~GB, the ETL transformations (parsing and aggregation) become heavy enough to benefit from parallel CPU execution.
 
 \subsection{Weak Scaling}
-Ideal weak scaling assumes a constant runtime when resources grow at the same rate as the data. We compared H-1 (1 worker/5~GB) to W-2 (2 workers/10~GB):
+Ideal weak scaling assumes a constant runtime when resources grow at the same rate as the data. We compared W-1 (1 worker/5~GB) to W-2 (2 workers/10~GB):
 
 \begin{itemize}
     \item \textbf{1 Worker / 5~GB (Trial W-1):} 142 seconds.

@@ -49,6 +49,7 @@
 % Header/Footer
 \pagestyle{fancy}
 \fancyhf{}
+\setlength{\headheight}{13.6pt}
 \fancyhead[L]{Data Engineering I -- Project VT 2026}
 \fancyhead[R]{1TD169}
 \fancyfoot[C]{\thepage}
@@ -120,15 +121,14 @@
 % Minimum 4–5 references (dataset source, related work, tool documentation)
 
 \printbibliography[title={References}]
+\clearpage
 
 % ============================================================
 % Appendix (optional)
 % ============================================================
-% \appendix
-% \section{Additional Figures}
-% \label{app:figures}
-%
-% \section{Code Snippets}
-% \label{app:code}
+\appendix
+\section*{Appendix}
+\addcontentsline{toc}{section}{Appendix}
+\input{sections/appendix.tex}
 
 \end{document}

@@ -1,0 +1,213 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{TLC2024}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=f9ab0ee2fe51277d0cd0b122b2e172b3}{%
+           family={{New York City Taxi and Limousine Commission}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \strng{fullhash}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \strng{fullhashraw}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \strng{bibnamehash}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \strng{authorbibnamehash}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \strng{authornamehash}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \strng{authorfullhash}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \strng{authorfullhashraw}{f9ab0ee2fe51277d0cd0b122b2e172b3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2026-03-01}
+      \field{title}{{New York City Taxi and Limousine Commission (TLC) Trip Record Data}}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+      \endverb
+      \verb{url}
+      \verb https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+      \endverb
+    \endentry
+    \entry{Andrienko2013}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=67975e7ee81db63c4d54e16e4ecd7719}{%
+           family={Andrienko},
+           familyi={A\bibinitperiod},
+           given={Gennady},
+           giveni={G\bibinitperiod}}}%
+        {{hash=fb4aa093b9e8a02b221fbe0ede8d5cdb}{%
+           family={Andrienko},
+           familyi={A\bibinitperiod},
+           given={Natalia},
+           giveni={N\bibinitperiod}}}%
+        {{hash=56e309e6e40ce435da1c5e9b50fd6d4d}{%
+           family={Bak},
+           familyi={B\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+        {{hash=f98f00e0e766385de069a2d2e093bd6f}{%
+           family={Keim},
+           familyi={K\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=9f8e62cad9a584bd2b54a6029652660f}{%
+           family={Wrobel},
+           familyi={W\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{6add9fda2e0e50532c9dfc25e8fdd08b}
+      \strng{fullhash}{88e4fab092ea05a0fdb64c8a3b36a7a4}
+      \strng{fullhashraw}{88e4fab092ea05a0fdb64c8a3b36a7a4}
+      \strng{bibnamehash}{88e4fab092ea05a0fdb64c8a3b36a7a4}
+      \strng{authorbibnamehash}{88e4fab092ea05a0fdb64c8a3b36a7a4}
+      \strng{authornamehash}{6add9fda2e0e50532c9dfc25e8fdd08b}
+      \strng{authorfullhash}{88e4fab092ea05a0fdb64c8a3b36a7a4}
+      \strng{authorfullhashraw}{88e4fab092ea05a0fdb64c8a3b36a7a4}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Springer}
+      \field{title}{Visual analytics of movement}
+      \field{year}{2013}
+    \endentry
+    \entry{Zaharia2016}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=00dc518b94dfa6349c86e70661a1a5ef}{%
+           family={Zaharia},
+           familyi={Z\bibinitperiod},
+           given={Matei},
+           giveni={M\bibinitperiod}}}%
+        {{hash=c5a8ae0d5f065be17aae440a9eb11c79}{%
+           family={Chowdhury},
+           familyi={C\bibinitperiod},
+           given={Mosharaf},
+           giveni={M\bibinitperiod}}}%
+        {{hash=2b80efa845ff86794acc83783899dcf0}{%
+           family={Franklin},
+           familyi={F\bibinitperiod},
+           given={Michael\bibnamedelima J},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=8d2fd528d2484047352789c731e250a5}{%
+           family={Shenker},
+           familyi={S\bibinitperiod},
+           given={Scott},
+           giveni={S\bibinitperiod}}}%
+        {{hash=51d9ef26181e2e8a9dc546b401e0bb26}{%
+           family={Stoica},
+           familyi={S\bibinitperiod},
+           given={Ion},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{43b7683e391995e2f59755c9e939df3c}
+      \strng{fullhash}{6f76db0409769a7411dc03216ecf2122}
+      \strng{fullhashraw}{6f76db0409769a7411dc03216ecf2122}
+      \strng{bibnamehash}{6f76db0409769a7411dc03216ecf2122}
+      \strng{authorbibnamehash}{6f76db0409769a7411dc03216ecf2122}
+      \strng{authornamehash}{43b7683e391995e2f59755c9e939df3c}
+      \strng{authorfullhash}{6f76db0409769a7411dc03216ecf2122}
+      \strng{authorfullhashraw}{6f76db0409769a7411dc03216ecf2122}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Communications of the ACM}
+      \field{number}{11}
+      \field{title}{Apache Spark: a unified engine for big data processing}
+      \field{volume}{59}
+      \field{year}{2016}
+      \field{pages}{56\bibrangedash 65}
+      \range{pages}{10}
+    \endentry
+    \entry{Dean2008}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=4aecfb0cc2e1e3b7899129fa2a94e2b8}{%
+           family={Dean},
+           familyi={D\bibinitperiod},
+           given={Jeffrey},
+           giveni={J\bibinitperiod}}}%
+        {{hash=193bcec5240237591ad8fb697869f013}{%
+           family={Ghemawat},
+           familyi={G\bibinitperiod},
+           given={Sanjay},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{59b423e9fed33260f87a089f738c1beb}
+      \strng{fullhash}{59b423e9fed33260f87a089f738c1beb}
+      \strng{fullhashraw}{59b423e9fed33260f87a089f738c1beb}
+      \strng{bibnamehash}{59b423e9fed33260f87a089f738c1beb}
+      \strng{authorbibnamehash}{59b423e9fed33260f87a089f738c1beb}
+      \strng{authornamehash}{59b423e9fed33260f87a089f738c1beb}
+      \strng{authorfullhash}{59b423e9fed33260f87a089f738c1beb}
+      \strng{authorfullhashraw}{59b423e9fed33260f87a089f738c1beb}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Communications of the ACM}
+      \field{number}{1}
+      \field{title}{MapReduce: simplified data processing on large clusters}
+      \field{volume}{51}
+      \field{year}{2008}
+      \field{pages}{107\bibrangedash 113}
+      \range{pages}{7}
+    \endentry
+    \entry{Amdahl1967}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=9d4382f1500ff84c4eca531179c994c7}{%
+           family={Amdahl},
+           familyi={A\bibinitperiod},
+           given={Gene\bibnamedelima M},
+           giveni={G\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{9d4382f1500ff84c4eca531179c994c7}
+      \strng{fullhash}{9d4382f1500ff84c4eca531179c994c7}
+      \strng{fullhashraw}{9d4382f1500ff84c4eca531179c994c7}
+      \strng{bibnamehash}{9d4382f1500ff84c4eca531179c994c7}
+      \strng{authorbibnamehash}{9d4382f1500ff84c4eca531179c994c7}
+      \strng{authornamehash}{9d4382f1500ff84c4eca531179c994c7}
+      \strng{authorfullhash}{9d4382f1500ff84c4eca531179c994c7}
+      \strng{authorfullhashraw}{9d4382f1500ff84c4eca531179c994c7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of the April 18-20, 1967, spring joint computer conference}
+      \field{title}{Validity of the single processor approach to achieving large scale computing capabilities}
+      \field{year}{1967}
+      \field{pages}{483\bibrangedash 485}
+      \range{pages}{3}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

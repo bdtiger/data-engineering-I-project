@@ -1,0 +1,64 @@
+\section{Supplemental Project Information}
+\label{sec:appendix}
+
+This appendix provides additional technical details regarding the cluster configuration, dataset schema, and performance metrics derived during the NYC Taxi data engineering project.
+
+\subsection{Cluster Node Specifications}
+The infrastructure was deployed on the SNIC OpenStack instance using four \texttt{ssc.medium} virtual machines[cite: 112, 113]. The specific resource allocation per node is detailed in Table~\ref{tab:cluster-specs}.
+
+\begin{table}[H]
+    \centering
+    \caption{OpenStack Cluster Configuration[cite: 114, 116, 118].}
+    \label{tab:cluster-specs}
+    \begin{tabular}{llll}
+        \hline
+        \textbf{Node Role} & \textbf{Count} & \textbf{Resources (per VM)} & \textbf{Primary Services} \\
+        \hline
+        Master Node & 1 & 2 vCPU, 4 GB RAM & NameNode, ResourceManager, Spark Driver \\
+        Worker Node & 3 & 2 vCPU, 4 GB RAM & DataNode, NodeManager, Spark Executor \\
+        \hline
+        \textbf{Total} & \textbf{4} & \textbf{8 vCPU, 16 GB RAM} & \textbf{100 GB Collective Storage} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Data Pipeline Codebase}
+The project implementation relies on a modular set of scripts and notebooks organized for reproducibility[cite: 130]:
+\begin{itemize}
+    \item \textbf{\texttt{scripts/ingest\_nyc\_taxi.sh}}: Automates data acquisition, integrity verification, and HDFS deposition[cite: 135].
+    \item \textbf{\texttt{src/etl\_job.py}}: Manages individual file processing, schema normalization, and attribute pruning[cite: 138].
+    \item \textbf{\texttt{src/analysis\_job.py}}: Executes PySpark SQL aggregations and generates the final CSV output[cite: 139].
+    \item \textbf{\texttt{scripts/run\_benchmark.sh}}: A harness for automated performance testing across varied resource caps[cite: 140].
+\end{itemize}
+
+\subsection{Extended Experimental Results}
+The following data points represent the core metrics captured during the scalability trials discussed in Section~\ref{sec:scalability}.
+
+\subsubsection{Strong Scaling (5 GB Workload)}
+With compute density fixed at 2 cores per worker[cite: 170]:
+\begin{itemize}
+    \item \textbf{Trial H-1 (1 Worker)}: 142 seconds[cite: 171].
+    \item \textbf{Trial H-2 (2 Workers)}: 89 seconds[cite: 173].
+    \item \textbf{Trial H-3 (3 Workers)}: 81 seconds[cite: 174].
+\end{itemize}
+
+\subsubsection{Vertical Scaling (Fixed 3-Worker Cluster)}
+Impact of doubling CPU cores per node[cite: 209]:
+\begin{itemize}
+    \item \textbf{5 GB Dataset}: Runtime improved marginally from 83s to 80s[cite: 210].
+    \item \textbf{10 GB Dataset}: Runtime improved significantly from 102s to 80s (21\% gain)[cite: 211].
+\end{itemize}
+
+\subsubsection{Weak Scaling (5 GB Data per Node)}
+Comparison of proportional resource and workload growth[cite: 232]:
+\begin{itemize}
+    \item \textbf{1 Worker / 5 GB}: 142 seconds[cite: 234].
+    \item \textbf{2 Workers / 10 GB}: 173 seconds (21\% performance degradation)[cite: 235, 264].
+\end{itemize}
+
+\subsection{Efficiency Metrics}
+Calculated efficiency ($E = S/N$) relative to linear scaling[cite: 168, 277]:
+\begin{itemize}
+    \item \textbf{2-Worker System}: Speedup $\approx 1.60$; Efficiency $= 80\%$[cite: 278].
+    \item \textbf{3-Worker System}: Speedup $\approx 1.75$; Efficiency $\approx 58\%$[cite: 279].
+\end{itemize}
