@@ -1,0 +1,19 @@
+\section{Test \& QA Engineering Contributions}
+\label{sec:qa_contributions}
+
+As the Test and Quality Assurance (QA) Engineer, the primary objective was to enforce strict code quality, guarantee the scientific validity of the scalability experiments, and harden the execution pipeline against failures. The following key contributions were made to the core benchmarking infrastructure:
+
+\subsection{Dynamic Data Filtering for Weak Scaling}
+The \texttt{src/etl\_job.py} PySpark script was modified to dynamically accept a \texttt{-{}-data\_size\_gb} argument. To prevent the pipeline from inadvertently processing the entire dataset during Weak Scaling experiments, dynamic file-loading logic was engineered utilizing the HDFS \texttt{FileStatus.getLen()} method. The script now accurately calculates the byte size of raw Parquet partitions and mathematically halts ingestion once the experimental data threshold is reached, guaranteeing mathematically valid scaling metrics.
+
+\subsection{High-Granularity Run Metrics}
+The timing mechanism inside the \texttt{run\_benchmark.sh} automation script was refactored. Instead of measuring gross end-to-end pipeline completion time, the script now isolates \texttt{START\_ETL} and \texttt{START\_ANALYSIS} timestamps. The resulting \texttt{timings.csv} outputs decoupled \texttt{etl\_runtime\_seconds} and \texttt{analysis\_runtime\_seconds}. This allows the team to pinpoint exact computational bottlenecks and graph the Spark cluster's performance with superior precision.
+
+\subsection{Cold Start Integrity via Page Caching}
+A critical flaw was identified where consecutive Spark benchmark tests were artificially accelerating due to the Linux OS automatically caching Parquet files in RAM (hot cache). To resolve this, an OS-level cache purge (\texttt{sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop\_caches'}) was engineered to execute prior to every experiment. This enforces a true ``Cold Start'' for every iteration, forcing Spark to repeatedly perform physical reads from the disks and ensuring the benchmark correctly evaluates the Spark cluster's horizontal scalability rather than the OS's caching speeds.
+
+\subsection{Bash Strict Mode \& Pre-Flight Validation}
+The bash pipeline was upgraded to utilize ``Bash Strict Mode'' (\texttt{set -euo pipefail}) alongside dynamic project path resolution (\texttt{BASH\_SOURCE}). Comprehensive pre-flight validations were built to verify the existence of \texttt{spark-submit} tools and Python scripts. This drastically improved codebase robustness by ensuring that missing paths or unbound variables halt the script immediately, preventing cryptic Apache Spark Exceptions or silent data corruption during 30-minute test cycles.
+
+\subsection{Automated System Logging Matrix Engine}
+The logging architecture was overhauled by automatically piping raw PySpark stdout/stderr into isolated debug files (e.g., \texttt{results/logs/<label>\_etl.log}) to maintain a pristine console display. A global \texttt{benchmark\_run\_matrix.log} was initialized to create an automated audit trail that perfectly tracks exactly when, and under what worker/core combinations, every single experimental run was initialized.
