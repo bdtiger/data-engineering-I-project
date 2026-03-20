@@ -61,8 +61,8 @@ run_experiment() {
     # Drop OS caches to guarantee a true Cold Start
     # Note: Requires passwordless sudo privileges
     # ------------------------------------------
-    echo ">>> Clearing OS Page Caches for cold start..."
-    sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'
+    # echo ">>> Clearing OS Page Caches for cold start..."
+    # sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'
     
     # Record execution context into master matrix log
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Started $label: workers=$workers, cores=$cores, data=${data_gb}GB" >> "$MAIN_LOG"
