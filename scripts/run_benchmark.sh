@@ -2,6 +2,9 @@
 # scripts/run_benchmark.sh
 # Runs all scaling experiments and records runtimes to results/timings.csv
 
+# Step 1: Bash strict mode
+set -euo pipefail
+
 MASTER_SPARK_URL="spark://group-32-master:7077"
 ETL_JOB="$HOME/data-engineering-I-project/src/etl_job.py"
 ANALYSIS_JOB="$HOME/data-engineering-I-project/src/analysis_job.py"
@@ -11,7 +14,25 @@ RESULTS_FILE="$RESULTS_DIR/timings.csv"
 # Ensure results directory and log directory exist
 mkdir -p "$RESULTS_DIR/logs"
 # Write CSV header
-echo "experiment,workers,cores_per_executor,data_gb,etl_runtime_seconds,analysis_runtime_seconds,total_runtime_seconds" > $RESULTS_FILE
+echo "experiment,workers,cores_per_executor,data_gb,etl_runtime_seconds,analysis_runtime_seconds,total_runtime_seconds" > "$RESULTS_FILE"
+
+# Step 6: Initialize the global run matrix log
+MAIN_LOG="$RESULTS_DIR/logs/benchmark_run_matrix.log"
+echo "--- Benchmark Session Matrix Log: $(date) ---" >> "$MAIN_LOG"
+
+# Step 4: Pre-flight checks
+if ! command -v spark-submit &> /dev/null; then
+    echo "ERROR: spark-submit could not be found. Please ensure it is installed and in your PATH." | tee -a "$MAIN_LOG"
+    exit 1
+fi
+if [ ! -f "$ETL_JOB" ]; then
+    echo "ERROR: ETL job script not found at $ETL_JOB" | tee -a "$MAIN_LOG"
+    exit 1
+fi
+if [ ! -f "$ANALYSIS_JOB" ]; then
+    echo "ERROR: Analysis job script not found at $ANALYSIS_JOB" | tee -a "$MAIN_LOG"
+    exit 1
+fi
 
 run_experiment() {
     local label=$1
@@ -22,6 +43,9 @@ run_experiment() {
     echo "==============================="
     echo "Running: $label | workers=$workers | cores=$cores | data=${data_gb}GB"
     echo "==============================="
+    
+    # Step 6: Log experiment trigger to master log
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Started $label: workers=$workers, cores=$cores, data=${data_gb}GB" >> "$MAIN_LOG"
 
     local etl_log="$RESULTS_DIR/logs/${label}_etl.log"
     echo ">>> Starting ETL Job... (logs: $etl_log)"
