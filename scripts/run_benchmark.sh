@@ -6,9 +6,12 @@
 set -euo pipefail
 
 MASTER_SPARK_URL="spark://group-32-master:7077"
-ETL_JOB="$HOME/data-engineering-I-project/src/etl_job.py"
-ANALYSIS_JOB="$HOME/data-engineering-I-project/src/analysis_job.py"
-RESULTS_DIR="$HOME/data-engineering-I-project/results"
+
+# Step 2: Dynamic Project Path Resolution
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ETL_JOB="$PROJECT_ROOT/src/etl_job.py"
+ANALYSIS_JOB="$PROJECT_ROOT/src/analysis_job.py"
+RESULTS_DIR="$PROJECT_ROOT/results"
 RESULTS_FILE="$RESULTS_DIR/timings.csv"
 
 # Ensure results directory and log directory exist
