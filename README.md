@@ -211,7 +211,13 @@ bash scripts/run_benchmark.sh
 | V-2 | Vertical | 3 Workers, 2 cores/executor | 5 GB |
 | V-3 | Vertical | 3 Workers, 1 core/executor | 10 GB |
 | V-4 | Vertical | 3 Workers, 2 cores/executor | 10 GB |
-Results (runtimes, speedup, efficiency) are collected in `data/results/`.
+Results are organized in the `results/` directory:
+- **`results/timings.csv`**: Contains decoupled metrics (`etl_runtime_seconds`, `analysis_runtime_seconds`, `total_runtime_seconds`).
+- **`results/logs/benchmark_run_matrix.log`**: A master log indicating exact execution triggers and sizes.
+- **`results/logs/<label>_etl.log`** & **`<label>_analysis.log`**: Standard Spark-Submit terminal output captured separately.
+
+> [!NOTE]  
+> The benchmark script executes `sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'` prior to each run to simulate an entirely cold cache. The user running the benchmark script will need sudo privileges on the cluster. It also supports accepting a data constraint via `--data_size_gb` allowing perfectly scaled experiments automatically.
 
 ---
 

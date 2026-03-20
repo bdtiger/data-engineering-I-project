@@ -2,28 +2,38 @@
 # scripts/run_benchmark.sh
 # Runs all scaling experiments and records runtimes to results/timings.csv
 
-# Step 1: Bash strict mode
+# ==========================================
+# 1. BASH ENVIRONMENT & STRICT MODE
+# ==========================================
 set -euo pipefail
 
 MASTER_SPARK_URL="spark://group-32-master:7077"
 
-# Step 2: Dynamic Project Path Resolution
+# ==========================================
+# 2. PATH RESOLUTION & CONFIGURATION
+# ==========================================
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ETL_JOB="$PROJECT_ROOT/src/etl_job.py"
 ANALYSIS_JOB="$PROJECT_ROOT/src/analysis_job.py"
 RESULTS_DIR="$PROJECT_ROOT/results"
 RESULTS_FILE="$RESULTS_DIR/timings.csv"
 
+# ==========================================
+# 3. GLOBAL LOGGING & CSV SETUP
+# ==========================================
 # Ensure results directory and log directory exist
 mkdir -p "$RESULTS_DIR/logs"
-# Write CSV header
+# Write CSV header for separated ETL and Analysis runtimes
 echo "experiment,workers,cores_per_executor,data_gb,etl_runtime_seconds,analysis_runtime_seconds,total_runtime_seconds" > "$RESULTS_FILE"
 
-# Step 6: Initialize the global run matrix log
+# Initialize the master matrix log to track experiment triggers
 MAIN_LOG="$RESULTS_DIR/logs/benchmark_run_matrix.log"
 echo "--- Benchmark Session Matrix Log: $(date) ---" >> "$MAIN_LOG"
 
-# Step 4: Pre-flight checks
+# ==========================================
+# 4. PRE-FLIGHT VALIDATION CHECKS
+# Ensure Spark & scripts are available
+# ==========================================
 if ! command -v spark-submit &> /dev/null; then
     echo "ERROR: spark-submit could not be found. Please ensure it is installed and in your PATH." | tee -a "$MAIN_LOG"
     exit 1
@@ -47,11 +57,14 @@ run_experiment() {
     echo "Running: $label | workers=$workers | cores=$cores | data=${data_gb}GB"
     echo "==============================="
     
-    # Step 5: Clear Linux Page Caches to force an accurate cold start
+    # ------------------------------------------
+    # Drop OS caches to guarantee a true Cold Start
+    # Note: Requires passwordless sudo privileges
+    # ------------------------------------------
     echo ">>> Clearing OS Page Caches for cold start..."
     sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'
     
-    # Step 6: Log experiment trigger to master log
+    # Record execution context into master matrix log
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Started $label: workers=$workers, cores=$cores, data=${data_gb}GB" >> "$MAIN_LOG"
 
     local etl_log="$RESULTS_DIR/logs/${label}_etl.log"
