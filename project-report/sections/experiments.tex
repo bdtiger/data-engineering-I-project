@@ -1,96 +1,201 @@
 \section{Scalability Experiments \& Results}
 \label{sec:scalability}
+% ===========================================================================
+\subsubsection{Experimental Design}
+\label{sec:design}
+% ===========================================================================
+We evaluated the scalability of our Apache Spark data pipeline on an OpenStack SSC cluster composed of 4 \texttt{ssc.medium} VMs. The pipeline consists of two PySpark jobs: an \textbf{ETL job} (\texttt{etl\_job.py}) and an \textbf{Analysis job} (\texttt{analysis\_job.py})
 
-\subsection{Experimental Design}
-\label{subsec:experimental-design}
-The objective of our experiments was to evaluate the performance characteristics and limitations of the Spark-based data pipeline. We manipulated three independent variables across eight distinct trials: cluster size (1 to 3 workers), compute density (1 to 2 cores per executor), and workload volume (5~GB and 10~GB). This structured approach allowed us to isolate three specific scaling paradigms essential for distributed systems analysis:
+We conducted three categories of experiments:
 
-\begin{itemize}
-    \item \textbf{Horizontal (Strong) Scaling:} This measures the system's ability to reduce total execution time as additional worker nodes are added (Trials H-1, H-2, and H-3) while maintaining a fixed 5~GB workload. 
-    \item \textbf{Vertical Scaling:} This evaluates the impact of increasing CPU cores per worker (1 vs. 2 cores) while keeping the cluster size fixed at three nodes. This was tested for both 5~GB (V-1, V-2) and 10~GB (V-3, V-4) datasets to identify if the job is compute-bound.
-    \item \textbf{Weak Scaling:} This measures how the system handles proportional growth in both workload and resources (W-1 vs. W-2). Ideally, if the data per worker remains constant (5~GB/node), the runtime should remain flat.
-\end{itemize}
+\begin{enumerate}
+    \item \textbf{Horizontal Strong Scaling (H-1 to H-3):} Fixed data at 5\,GB, fixed cores per executor at 2. Varied worker nodes from 1 to 3.
+    \item \textbf{Horizontal Weak Scaling (W-1, W-2):} Proportionally scaled both resources and data. 1 worker with 5\,GB, then 2 workers with 10\,GB.
+    \item \textbf{Vertical Strong Scaling (V-1 to V-4):} Fixed workers at 3. Varied cores per executor from 1 to 2, tested on both 5\,GB and 10\,GB datasets.
+\end{enumerate}
 
-The primary metrics for evaluation are total runtime in seconds, Speedup ($S = T_1/T_N$), and Efficiency ($E = S/N$).
+Each experiment was executed with \textbf{operating system page caching active}, meaning previously read HDFS data blocks remained present in the Linux buffer cache between runs. ETL and Analysis runtimes were measured independently using separated timestamps.
 
-\subsection{Horizontal Scaling (Strong Scaling)}
-Using a fixed 5~GB workload and 2 cores per worker, we observed a clear trend of diminishing returns as the cluster size increased from one to three nodes:
+% ===========================================================================
+\subsection{Results}
 
-\begin{itemize}
-    \item \textbf{1 Worker (Trial H-1):} 142 seconds.
-    \item \textbf{2 Workers (Trial H-2):} 89 seconds (A significant 53-second reduction).
-    \item \textbf{3 Workers (Trial H-3):} 81 seconds (A marginal 8-second reduction).
-\end{itemize}
+% ===========================================================================
 
-\begin{figure}[H]
+\subsubsection{Raw Timing Data}
+
+\begin{table}[htbp]
+\centering
+\caption{Benchmark results: decoupled ETL and Analysis runtimes (seconds).}
+\label{tab:timings}
+\begin{tabular}{llcccrrr}
+\toprule
+\textbf{ID} & \textbf{Type} & \textbf{Workers} & \textbf{Cores/Exec} & \textbf{Data} & \textbf{ETL (s)} & \textbf{Analysis (s)} & \textbf{Total (s)} \\
+\midrule
+H-1 & Strong Horiz. & 1 & 2 & 5\,GB  & 8  & 120 & 128 \\
+H-2 & Strong Horiz. & 2 & 2 & 5\,GB  & 7  & 84  & 91 \\
+H-3 & Strong Horiz. & 3 & 2 & 5\,GB  & 7  & 69  & 76 \\
+\midrule
+W-1 & Weak Horiz.   & 1 & 2 & 5\,GB  & 8  & 127 & 135 \\
+W-2 & Weak Horiz.   & 2 & 2 & 10\,GB & 7  & 84  & 91 \\
+\midrule
+V-1 & Vertical      & 3 & 1 & 5\,GB  & 7  & 73  & 80 \\
+V-2 & Vertical      & 3 & 2 & 5\,GB  & 8  & 64  & 72 \\
+V-3 & Vertical      & 3 & 1 & 10\,GB & 8  & 94  & 102 \\
+V-4 & Vertical      & 3 & 2 & 10\,GB & 8  & 67  & 75 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+From Table~\ref{tab:timings} is that the \textbf{ETL runtime is constant at 7--8 seconds across every configuration}, regardless of the number of workers, cores, or data volume. This reveals that ETL is not the scalability-sensitive phase; all scaling behavior is driven entirely by the Analysis job.
+
+\subsubsection{Plots}
+
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.65\textwidth]{horizontal_scaling_bar.png}
-    \caption{Strong Scaling: Execution time for 5~GB dataset across 1, 2, and 3 workers.}
-    \label{fig:horizontal_scaling}
+    \includegraphics[width=0.9\textwidth]{figures/horizontal_scaling.png}
+    \caption{Horizontal strong scaling: with data fixed at 5\,GB and 2 cores per executor, worker nodes were increased from 1 to 3.}
+    \label{fig:horizontal}
 \end{figure}
 
-\textbf{Analysis:} The results indicate that while the jump from one to two workers yielded $\mathtt{\sim}$37\% improvement in speed, the transition to a third worker provided only $\mathtt{\sim}$9\% gain. This non-linear behavior suggests that for a relatively small 5~GB dataset, the administrative overhead of the Spark driver, specifically task distribution and managing RDD partitions, begins to consume a larger percentage of the total runtime than the actual computation.
-
-\subsection{Vertical Scaling}
-We compared 1 vs. 2 cores on a fixed 3-worker cluster to determine the impact of compute density on different data scales:
-
-\begin{itemize}
-    \item \textbf{5~GB Workload (V-1 vs. V-2):} Runtime decreased from 83s to 80s, a negligible gain.
-    \item \textbf{10~GB Workload (V-3 vs. V-4):} Runtime decreased from 102s to 80s, a significant 21\% improvement.
-\end{itemize}
-
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{vertical_scaling_5gb.png}
-        \caption{Vertical Scaling (5~GB)}
-        \label{fig:vertical_5gb}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{vertical_scaling_10gb.png}
-        \caption{Vertical Scaling (10~GB)}
-        \label{fig:vertical_10gb}
-    \end{minipage}
-\end{figure}
-
-\textbf{Analysis:} The effectiveness of vertical scaling is strictly dependent on the data volume. At 5~GB, the workers are not CPU-bound; hence, additional cores do not help. However, at 10~GB, the ETL transformations (parsing and aggregation) become heavy enough to benefit from parallel CPU execution.
-
-\subsection{Weak Scaling}
-Ideal weak scaling assumes a constant runtime when resources grow at the same rate as the data. We compared W-1 (1 worker/5~GB) to W-2 (2 workers/10~GB):
-
-\begin{itemize}
-    \item \textbf{1 Worker / 5~GB (Trial W-1):} 142 seconds.
-    \item \textbf{2 Workers / 10~GB (Trial W-2):} 173 seconds.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.65\textwidth]{weak_scaling_bar.png}
-    \caption{Weak Scaling: Maintaining 5~GB of data per worker node.}
+    \includegraphics[width=0.9\textwidth]{figures/weak_scaling.png}
+    \caption{Weak scaling: both workers and data were doubled proportionally (1 worker / 5\,GB $\to$ 2 workers / 10\,GB).}
     \label{fig:weak_scaling}
 \end{figure}
 
-\textbf{Analysis:} Weak scaling failed to maintain constant time, showing $\mathtt{\sim}$21\% increase in runtime. This degradation highlights the significant ``coordination tax'' required to manage larger datasets across multiple nodes, primarily due to increased network latency during Spark's shuffle phase and non-linear I/O performance in the virtualized HDFS environment.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/vertical_scaling.png}
+    \caption{Vertical scaling: with 3 workers fixed, cores per executor were doubled from 1 to 2.}
+    \label{fig:vertical}
+\end{figure}
 
-\subsection{Bottleneck Identification}
-A critical observation is the ``Performance Floor'' at the $\sim$80-second mark. Trials H-3 (81s), V-2 (80s), and V-4 (80s) all converged here, regardless of data size or CPU cores. Some of the possible causes are:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/speedup_efficiency.png}
+    \caption{Speedup ($S = T_1 / T_p$) and Efficiency ($E = S / p$) across all scaling experiments.}
+    \label{fig:speedup_efficiency}
+\end{figure}
 
-\begin{enumerate}
-    \item \textbf{Scheduling Overhead:} At 80s, the time required to partition data and schedule tasks dominates the execution time.
-    \item \textbf{Shuffle I/O:} Network bandwidth saturation during the reduce/group-by phase limits gains from faster CPUs.
-    \item \textbf{Storage Limits:} Shared HDFS throughput likely hit a ceiling, capping the read speeds for both 5~GB and 10~GB datasets.
-    \item \textbf{Memory Pressure:} For 10~GB loads, the RAM limit per node increases garbage collection (GC) frequency during data shuffling, further impeding scalability.
-\end{enumerate}
+\subsubsection{Speedup and Efficiency Calculations}
 
-\subsection{Speedup \& Efficiency Analysis}
-Comparing our findings to theoretical linear scaling reveals a significant efficiency drop-off:
-
+For each experiment, we compute:
 \begin{itemize}
-    \item \textbf{2-Worker Case ($N=2$):} Speedup $S \approx 1.60$ (Ideal: 2.0); Efficiency $E = 80\%$.
-    \item \textbf{3-Worker Case ($N=3$):} Speedup $S \approx 1.75$ (Ideal: 3.0); Efficiency $E \approx 58\%$.
+    \item \textbf{Speedup} $S = T_{\text{baseline}} / T_{\text{scaled}}$
+    \item \textbf{Efficiency} $E = S / p$, where $p$ is the resource scaling factor.
 \end{itemize}
 
-The efficiency plummet at three workers confirms that the 5~GB dataset is too small to offset the overhead of the third node. According to Amdahl’s Law, the sequential portions of the code and the driver-side result collection create a fixed cost that prevents the system from achieving linear speedup regardless of additional worker allocation.
+\begin{table}[htbp]
+\centering
+\caption{Speedup and efficiency across all scaling experiments.}
+\label{tab:speedup}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Experiment} & \textbf{Comparison} & \textbf{$T_{\text{base}}$ (s)} & \textbf{$T_{\text{scaled}}$ (s)} & \textbf{Speedup} & \textbf{Efficiency} \\
+\midrule
+\multicolumn{6}{l}{\textit{Horizontal Strong Scaling (5\,GB, ideal speedup = 3.0$\times$)}} \\
+H-1 $\to$ H-3 & 1w $\to$ 3w & 128 & 76 & 1.68$\times$ & 56.1\% \\
+\midrule
+\multicolumn{6}{l}{\textit{Vertical Scaling -- 5\,GB (ideal speedup = 2.0$\times$)}} \\
+V-1 $\to$ V-2 & 1c $\to$ 2c & 80 & 72 & 1.11$\times$ & 55.6\% \\
+\midrule
+\multicolumn{6}{l}{\textit{Vertical Scaling -- 10\,GB (ideal speedup = 2.0$\times$)}} \\
+V-3 $\to$ V-4 & 1c $\to$ 2c & 102 & 75 & 1.36$\times$ & 68.0\% \\
+\midrule
+\multicolumn{6}{l}{\textit{Weak Scaling (ideal ratio = 1.0$\times$, i.e., constant runtime)}} \\
+W-1 $\to$ W-2 & 1w/5GB $\to$ 2w/10GB & 135 & 91 & 1.48$\times$ & 74.2\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ===========================================================================
+\subsection{Analysis of Results}
+% ===========================================================================
+
+\subsubsection{Constant ETL Phase}
+
+The ETL job completed in 7--8 seconds regardless of configuration. This indicates that the ETL phase is not compute-bound, adding more workers or cores has no effect on ETL. 
+
+\subsubsection{Horizontal Strong Scaling}
+
+Adding workers from 1 to 3 reduced the total runtime from 128s to 76s (1.68$\times$ speedup), with the Analysis phase improving from 120s to 69s (1.74$\times$). Scaling did work, but fell well short of the ideal 3.0$\times$.
+
+The possible causes are:
+\begin{enumerate}
+    \item The ETL phase (7--8s) is serial and unaffected by parallelism. 
+    \item The \textbf{groupBy aggregation} in the Analysis job requires data to be redistributed across workers. This overhead grows with the number of workers.
+\end{enumerate}
+
+\subsubsection{Weak Scaling}
+
+Weak scaling produced an interesting result. Doubling both workers (1$\to$2) and data (5\,GB$\to$10\,GB) changed runtime from 135s to only 91s. In an ideal weak scaling scenario, runtime should remain constant. Here, surprisingly, runtime actually \textit{decreased} by 33\%. The weak scaling efficiency is 74.2\%, well above the 50\% threshold.
+
+The possible reason is that with 2 workers, the per-node data volume is similar, but Spark gains additional 2 cores. This might allow better computation performance
+\subsubsection{Vertical Scaling}
+
+Vertical scaling (adding cores within the same worker nodes) yielded markedly different results depending on the dataset size:
+
+\begin{itemize}
+    \item \textbf{5\,GB (V-1$\to$V-2):} Modest improvement from 80s to 72s (1.11$\times$ speedup, 55.6\% efficiency). With 3 workers already providing baseline parallelism, adding a second core per executor doubles cores from 3 to 6. However, the 5\,GB dataset is small enough that the additional concurrency yields diminishing returns.
+    \item \textbf{10\,GB (V-3$\to$V-4):} Stronger improvement from 102s to 75s (1.36$\times$ speedup, 68\% efficiency). The larger dataset provides enough computational work to utilize additional cores. It suggests the 10\,GB workload is sufficiently compute-intensive to benefit from vertical scaling.
+\end{itemize}
+
+% ===========================================================================
+\subsection{Horizontal vs. Vertical Scaling Comparison}
+% ===========================================================================
+
+\textbf{Comparing Horizontal vs. Vertical scaling reveals a critical insight for this workload.} 
+For the 5\,GB dataset on our ssc.medium cluster:
+
+\begin{itemize}
+    \item Horizontal scaling (H-1$\to$H-3): 1.68$\times$ speedup, 56.1\% efficiency.
+    \item Vertical scaling (V-1$\to$V-2): 1.11$\times$ speedup, 55.6\% efficiency.
+\end{itemize}
+
+At first glance, horizontal scaling appears superior (1.68$\times$ vs 1.11$\times$). However, Horizontal scaling tripled resources ($p=3$) while Vertical scaling only doubled them ($p=2$). When normalized by efficiency, both achieved nearly identical efficiency ($\sim$56\%). This means that each additional unit of compute resource provided the same marginal improvement regardless of whether it was added as an extra node or an extra core.
+
+For the \textbf{10\,GB dataset}, vertical scaling achieved the highest efficiency of any experiment at \textbf{68\%}, compared to the horizontal experiment's 56\%. The reason is that adding a core within an existing worker avoids the network communication overhead that horizontal scaling introduces. When a new worker is added, intermediate aggregation results must be transferred across the network during the groupBy/join phases. 
+
+% ===========================================================================
+\subsection{Bottleneck Identification}
+\label{sec:bottlenecks}
+% ===========================================================================
+
+\subsubsection{Bottleneck 1: Network Communication Overhead}
+The Analysis job's \texttt{groupBy} aggregation requires data redistribution across workers. Each worker must send its local aggregation results to every other worker, which might generate network overhead.
+
+\subsubsection{Bottleneck 2: Fixed Serial Overhead (Amdahl's Law)}
+The ETL runtime of 7--8s is completely unaffected by parallelism. By Amdahl's Law, this  limits the maximum achievable speedup with 3 workers. Additional serial costs (Spark  initialization, HDFS metadata lookups etc) further increase this.
+
+
+
+% ===========================================================================
+\subsection{Further Experiment: Impact of OS Page Caching: Cold vs.~Hot Cache}
+% ===========================================================================
+
+To quantify the impact of Linux OS page caching on benchmark validity, we executed the full experiment matrix under two conditions: (1) \textbf{Cold Cache} — the Linux page cache was purged via \texttt{sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop\_caches'} before each run, forcing physical disk reads; and (2) \textbf{Hot Cache} — the page cache was left intact, allowing the kernel to serve HDFS blocks from RAM.
+
+Table~\ref{tab:cold_vs_hot} shows a representative comparison using the \textbf{H-3} configuration (3 workers, 2 cores/executor, 5\,GB).
+
+\begin{table}[htbp]
+\centering
+\caption{Cold Cache vs.~Hot Cache comparison (H-3: 3 workers, 2 cores, 5\,GB).}
+\label{tab:cold_vs_hot}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Metric} & \textbf{Cold Cache (s)} & \textbf{Hot Cache (s)} & \textbf{Reduction} \\
+\midrule
+ETL Runtime          & 129 & 7   & 94.6\% \\
+Analysis Runtime     & 96  & 69  & 28.1\% \\
+Total Runtime        & 225 & 76  & 66.2\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/cold_vs_hot_cache.png}
+    \caption{OS page caching reduces ETL runtime by 94.6\% (129s $\to$ 7s) by serving HDFS blocks from kernel RAM instead of physical disk.}
+    \label{fig:cold_vs_hot}
+\end{figure}

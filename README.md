@@ -9,13 +9,13 @@
 
 ### Team Members
 
-| Name | Role |
-|------|------|
-| Abdur Rehman Khalid | Data Engineer |
-| Arnab Kumar Ghosh | Infrastructure Engineer and Core Logic Developer |
-| Dip Chowdhury | Test & QA Engineer |
-| Muhammad Umair | TBA |
-| Pradip Kumar Das | Analyst & Reporter |
+| Name                | Role                                             |
+| ------------------- | ------------------------------------------------ |
+| Abdur Rehman Khalid | Data Engineer                                    |
+| Arnab Kumar Ghosh   | Infrastructure Engineer and Core Logic Developer |
+| Dip Chowdhury       | Test & QA Engineer                               |
+| Muhammad Umair      | TBA                                              |
+| Pradip Kumar Das    | Analyst & Reporter                               |
 
 ---
 
@@ -26,7 +26,7 @@ This project demonstrates a scalable data processing pipeline using Apache Spark
 **Dataset:** NYC Taxi Trips.  
 **Source:** https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page.  
 **Format:** Parquet (columnar, no format conversion required).  
-**Target size:** 5-10 GB (several years of trip records).  
+**Target size:** 5-10 GB (several years of trip records).
 
 **Analysis Objective:**
 Filter invalid records and compute the **average trip duration and average fare amount grouped by pickup zone and hour of day**, writing results to HDFS as Parquet/CSV.
@@ -54,9 +54,6 @@ project-repo/
 │   └── run_benchmark.sh       # Run all scaling experiments (H-1/2/3, W-1/2/3, V-1/2)
 ├── notebooks/                 # Jupyter notebooks for data exploration
 │   └── final_notebook.ipynb   # PySpark data cleaning and aggregation pipeline for NYC taxi data
-├── results/                   # Benchmark scalability test outputs
-│   ├── timings.csv            # Decoupled metrics (ETL, Analysis, Total runtime)
-│   └── logs/                  # Verbose Spark execution logs & master matrix
 └── project-report/
     ├── report.tex             # LaTeX report source
     └── references.bib         # BibTeX references
@@ -66,9 +63,9 @@ project-repo/
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) | Full project plan — phases, grading targets, experiment design, submission checklist |
+| Document                                                   | Description                                                                                     |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md)               | Full project plan — phases, grading targets, experiment design, submission checklist            |
 | [docs/cluster-setup-guide.md](docs/cluster-setup-guide.md) | Step-by-step guide for provisioning and configuring the Hadoop + Spark cluster on OpenStack SSC |
 
 ---
@@ -102,6 +99,7 @@ Cluster Config:
 ```
 
 **Data Pipeline:**
+
 ```
 TLC Website (Parquet)
        │
@@ -155,17 +153,18 @@ bash scripts/deploy.sh <master-ip>
 Instead of manually downloading files, use the ingestion pipeline script to automatically download, validate, and upload the NYC Taxi Parquet files to HDFS.
 
 Run the pipeline from the Master node (specify the year you want to ingest):
+
 ```bash
 bash scripts/ingest_nyc_taxi.sh 2023
 ```
 
 This script automatically handles:
 
-* Staging the downloads locally.
-* Validating file sizes to remove corrupted records.
-* Creating the necessary HDFS directories (`/data/nyc-taxi/raw/`).
-* Uploading the validated Parquet files to HDFS.
-* Cleaning up the local staging area.
+- Staging the downloads locally.
+- Validating file sizes to remove corrupted records.
+- Creating the necessary HDFS directories (`/data/nyc-taxi/raw/`).
+- Uploading the validated Parquet files to HDFS.
+- Cleaning up the local staging area.
 
 ---
 
@@ -203,28 +202,23 @@ bash scripts/run_benchmark.sh
 
 ### Experiment Matrix
 
-| ID | Type | Config | Data |
-|----|------|--------|------|
-| H-1 | Strong (Horizontal) | 1 Worker | 5 GB |
-| H-2 | Strong (Horizontal) | 2 Workers | 5 GB |
-| H-3 | Strong (Horizontal) | 3 Workers | 5 GB |
-| W-1 | Weak (Horizontal) | 1 Worker | 5 GB |
-| W-2 | Weak (Horizontal) | 2 Workers | 10 GB |
-| V-1 | Vertical | 3 Workers, 1 core/executor | 5 GB |
-| V-2 | Vertical | 3 Workers, 2 cores/executor | 5 GB |
-| V-3 | Vertical | 3 Workers, 1 core/executor | 10 GB |
-| V-4 | Vertical | 3 Workers, 2 cores/executor | 10 GB |
-### Result Structure
+| ID  | Type                | Config                      | Data  |
+| --- | ------------------- | --------------------------- | ----- |
+| H-1 | Strong (Horizontal) | 1 Worker                    | 5 GB  |
+| H-2 | Strong (Horizontal) | 2 Workers                   | 5 GB  |
+| H-3 | Strong (Horizontal) | 3 Workers                   | 5 GB  |
+| W-1 | Weak (Horizontal)   | 1 Worker                    | 5 GB  |
+| W-2 | Weak (Horizontal)   | 2 Workers                   | 10 GB |
+| V-1 | Vertical            | 3 Workers, 1 core/executor  | 5 GB  |
+| V-2 | Vertical            | 3 Workers, 2 cores/executor | 5 GB  |
+| V-3 | Vertical            | 3 Workers, 1 core/executor  | 10 GB |
+| V-4 | Vertical            | 3 Workers, 2 cores/executor | 10 GB |
 
 Results are organized in the `results/` directory:
-```text
-project-repo/results/
-├── timings.csv                        # Decoupled metrics (ETL, Analysis, Total runtime)
-└── logs/
-    ├── benchmark_run_matrix.log       # Master log indicating exact execution triggers and sizes
-    ├── <label>_etl.log                # Standard Spark-Submit terminal output for ETL job
-    └── <label>_analysis.log           # Standard Spark-Submit terminal output for Analysis job
-```
+
+- **`results/timings.csv`**: Contains decoupled metrics (`etl_runtime_seconds`, `analysis_runtime_seconds`, `total_runtime_seconds`).
+- **`results/logs/benchmark_run_matrix.log`**: A master log indicating exact execution triggers and sizes.
+- **`results/logs/<label>_etl.log`** & **`<label>_analysis.log`**: Standard Spark-Submit terminal output captured separately.
 
 > [!NOTE]  
 > The benchmark script executes `sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'` prior to each run to simulate an entirely cold cache. The user running the benchmark script will need sudo privileges on the cluster. It also supports accepting a data constraint via `--data_size_gb` allowing perfectly scaled experiments automatically.
@@ -234,4 +228,3 @@ project-repo/results/
 ## License
 
 This project is developed as part of the Data Engineering I course at Uppsala University. For academic use only.
-
