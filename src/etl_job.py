@@ -4,8 +4,9 @@ from pyspark.sql.types import DoubleType, LongType, StructType, StructField, Tim
 from functools import reduce
 from pyspark.sql import DataFrame
 import config
+import argparse
 
-def run_etl():
+def run_etl(data_size_gb=10):
     print("Starting ETL Job...")
     
     # 1. Initialize Spark Session with assignment configurations
@@ -41,8 +42,18 @@ def run_etl():
         statuses = fs.globStatus(Path(raw_data_path))
         if not statuses:
             raise Exception(f"No parquet files found in {config.RAW_DATA_PATH}")
-        file_paths = [s.getPath().toString() for s in statuses]
-        print(f"Found {len(file_paths)} files. Reading and standardizing iteratively...")
+        target_bytes = data_size_gb * (1024 ** 3)
+        current_bytes = 0
+        file_paths = []
+
+        for s in statuses:
+            if current_bytes < target_bytes:
+                file_paths.append(s.getPath().toString())
+                current_bytes += s.getLen()
+            else:
+                break
+
+        print(f"Found files. Selected {len(file_paths)} files to match approx {data_size_gb}GB limit. Reading iteratively...")
         dfs = []
         for file_path in file_paths:
             df = spark.read.parquet(file_path)
@@ -101,4 +112,8 @@ def run_etl():
         spark.stop()
 
 if __name__ == "__main__":
-    run_etl()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_size_gb", type=int, default=10, help="Target data size in GB")
+    args = parser.parse_args()
+
+    run_etl(data_size_gb=args.data_size_gb)

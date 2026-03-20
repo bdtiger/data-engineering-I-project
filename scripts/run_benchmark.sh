@@ -31,7 +31,7 @@ run_experiment() {
         --master $MASTER_SPARK_URL \
         --total-executor-cores $(( workers * cores )) \
         --executor-cores $cores \
-        $ETL_JOB > "$etl_log" 2>&1
+        $ETL_JOB --data_size_gb "$data_gb" > "$etl_log" 2>&1
         
     END_ETL=$(date +%s)
     ETL_RUNTIME=$(( END_ETL - START_ETL ))
