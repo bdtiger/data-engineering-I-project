@@ -47,6 +47,10 @@ run_experiment() {
     echo "Running: $label | workers=$workers | cores=$cores | data=${data_gb}GB"
     echo "==============================="
     
+    # Step 5: Clear Linux Page Caches to force an accurate cold start
+    echo ">>> Clearing OS Page Caches for cold start..."
+    sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'
+    
     # Step 6: Log experiment trigger to master log
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Started $label: workers=$workers, cores=$cores, data=${data_gb}GB" >> "$MAIN_LOG"
 
