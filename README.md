@@ -54,6 +54,9 @@ project-repo/
 │   └── run_benchmark.sh       # Run all scaling experiments (H-1/2/3, W-1/2/3, V-1/2)
 ├── notebooks/                 # Jupyter notebooks for data exploration
 │   └── final_notebook.ipynb   # PySpark data cleaning and aggregation pipeline for NYC taxi data
+├── results/                   # Benchmark scalability test outputs
+│   ├── timings.csv            # Decoupled metrics (ETL, Analysis, Total runtime)
+│   └── logs/                  # Verbose Spark execution logs & master matrix
 └── project-report/
     ├── report.tex             # LaTeX report source
     └── references.bib         # BibTeX references
@@ -211,10 +214,17 @@ bash scripts/run_benchmark.sh
 | V-2 | Vertical | 3 Workers, 2 cores/executor | 5 GB |
 | V-3 | Vertical | 3 Workers, 1 core/executor | 10 GB |
 | V-4 | Vertical | 3 Workers, 2 cores/executor | 10 GB |
+### Result Structure
+
 Results are organized in the `results/` directory:
-- **`results/timings.csv`**: Contains decoupled metrics (`etl_runtime_seconds`, `analysis_runtime_seconds`, `total_runtime_seconds`).
-- **`results/logs/benchmark_run_matrix.log`**: A master log indicating exact execution triggers and sizes.
-- **`results/logs/<label>_etl.log`** & **`<label>_analysis.log`**: Standard Spark-Submit terminal output captured separately.
+```text
+project-repo/results/
+├── timings.csv                        # Decoupled metrics (ETL, Analysis, Total runtime)
+└── logs/
+    ├── benchmark_run_matrix.log       # Master log indicating exact execution triggers and sizes
+    ├── <label>_etl.log                # Standard Spark-Submit terminal output for ETL job
+    └── <label>_analysis.log           # Standard Spark-Submit terminal output for Analysis job
+```
 
 > [!NOTE]  
 > The benchmark script executes `sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'` prior to each run to simulate an entirely cold cache. The user running the benchmark script will need sudo privileges on the cluster. It also supports accepting a data constraint via `--data_size_gb` allowing perfectly scaled experiments automatically.
