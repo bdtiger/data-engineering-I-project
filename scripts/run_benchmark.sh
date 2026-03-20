@@ -8,8 +8,8 @@ ANALYSIS_JOB="$HOME/data-engineering-I-project/src/analysis_job.py"
 RESULTS_DIR="$HOME/data-engineering-I-project/results"
 RESULTS_FILE="$RESULTS_DIR/timings.csv"
 
-# Ensure results directory exists
-mkdir -p $RESULTS_DIR
+# Ensure results directory and log directory exist
+mkdir -p "$RESULTS_DIR/logs"
 # Write CSV header
 echo "experiment,workers,cores_per_executor,data_gb,etl_runtime_seconds,analysis_runtime_seconds,total_runtime_seconds" > $RESULTS_FILE
 
@@ -23,24 +23,28 @@ run_experiment() {
     echo "Running: $label | workers=$workers | cores=$cores | data=${data_gb}GB"
     echo "==============================="
 
+    local etl_log="$RESULTS_DIR/logs/${label}_etl.log"
+    echo ">>> Starting ETL Job... (logs: $etl_log)"
     START_ETL=$(date +%s)
 
     spark-submit \
         --master $MASTER_SPARK_URL \
         --total-executor-cores $(( workers * cores )) \
         --executor-cores $cores \
-        $ETL_JOB
+        $ETL_JOB > "$etl_log" 2>&1
         
     END_ETL=$(date +%s)
     ETL_RUNTIME=$(( END_ETL - START_ETL ))
 
+    local analysis_log="$RESULTS_DIR/logs/${label}_analysis.log"
+    echo ">>> Starting Analysis Job... (logs: $analysis_log)"
     START_ANALYSIS=$(date +%s)
 
     spark-submit \
         --master $MASTER_SPARK_URL \
         --total-executor-cores $(( workers * cores )) \
         --executor-cores $cores \
-        $ANALYSIS_JOB
+        $ANALYSIS_JOB > "$analysis_log" 2>&1
 
     END_ANALYSIS=$(date +%s)
     ANALYSIS_RUNTIME=$(( END_ANALYSIS - START_ANALYSIS ))
