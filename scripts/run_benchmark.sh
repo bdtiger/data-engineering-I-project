@@ -11,7 +11,7 @@ RESULTS_FILE="$RESULTS_DIR/timings.csv"
 # Ensure results directory exists
 mkdir -p $RESULTS_DIR
 # Write CSV header
-echo "experiment,workers,cores_per_executor,data_gb,runtime_seconds" > $RESULTS_FILE
+echo "experiment,workers,cores_per_executor,data_gb,etl_runtime_seconds,analysis_runtime_seconds,total_runtime_seconds" > $RESULTS_FILE
 
 run_experiment() {
     local label=$1
@@ -23,13 +23,18 @@ run_experiment() {
     echo "Running: $label | workers=$workers | cores=$cores | data=${data_gb}GB"
     echo "==============================="
 
-    START=$(date +%s)
+    START_ETL=$(date +%s)
 
     spark-submit \
         --master $MASTER_SPARK_URL \
         --total-executor-cores $(( workers * cores )) \
         --executor-cores $cores \
         $ETL_JOB
+        
+    END_ETL=$(date +%s)
+    ETL_RUNTIME=$(( END_ETL - START_ETL ))
+
+    START_ANALYSIS=$(date +%s)
 
     spark-submit \
         --master $MASTER_SPARK_URL \
@@ -37,11 +42,13 @@ run_experiment() {
         --executor-cores $cores \
         $ANALYSIS_JOB
 
-    END=$(date +%s)
-    RUNTIME=$(( END - START ))
+    END_ANALYSIS=$(date +%s)
+    ANALYSIS_RUNTIME=$(( END_ANALYSIS - START_ANALYSIS ))
+    
+    TOTAL_RUNTIME=$(( ETL_RUNTIME + ANALYSIS_RUNTIME ))
 
-    echo "$label,$workers,$cores,$data_gb,$RUNTIME" >> $RESULTS_FILE
-    echo ">>> $label finished in ${RUNTIME}s"
+    echo "$label,$workers,$cores,$data_gb,$ETL_RUNTIME,$ANALYSIS_RUNTIME,$TOTAL_RUNTIME" >> $RESULTS_FILE
+    echo ">>> $label finished in ${TOTAL_RUNTIME}s (ETL: ${ETL_RUNTIME}s, Analysis: ${ANALYSIS_RUNTIME}s)"
 }
 
 # H = Horizontal scaling (changing number of workers)
